@@ -517,6 +517,6 @@ const MultiTrader: React.FC = observer(() => {
             </div>
         </div>
     );
-};
+});
 
 export default MultiTrader;
