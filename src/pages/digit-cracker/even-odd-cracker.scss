@@ -1,0 +1,459 @@
+// ────────────────────────────────────────────────────────────────────────────
+// Even / Odd Cracker Styles
+// ────────────────────────────────────────────────────────────────────────────
+
+.eo-cracker {
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+    padding: 1.6rem;
+    color: #fff;
+
+    // ── Header ──────────────────────────────────────────────────────────────
+    &__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+
+        h2 {
+            font-size: 1.4rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #00c6ff, #38ef7d);
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    }
+
+    // ── Market dropdown ──────────────────────────────────────────────────────
+    .eo-market-select {
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+
+        label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        select {
+            background: rgb(0 0 0 / 40%);
+            border: 1px solid rgb(255 255 255 / 15%);
+            border-radius: 10px;
+            color: #fff;
+            padding: 0.55rem 1.1rem;
+            font-size: 0.85rem;
+            outline: none;
+            cursor: pointer;
+        }
+    }
+}
+
+// ── Shared section ───────────────────────────────────────────────────────────
+.eo-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    padding: 1.2rem 1.4rem;
+
+    &__title {
+        font-size: 0.75rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #94a3b8;
+    }
+}
+
+// ── Glass Panel ──────────────────────────────────────────────────────────────
+.glass-panel {
+    background: rgb(255 255 255 / 3%);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgb(255 255 255 / 10%);
+    border-radius: 16px;
+}
+
+// ── Pattern ──────────────────────────────────────────────────────────────────
+.eo-pattern-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.eo-dot {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 900;
+    letter-spacing: 0;
+
+    &.even {
+        background: rgb(0 198 255 / 15%);
+        border: 1.5px solid #00c6ff;
+        color: #00c6ff;
+        box-shadow: 0 0 8px rgb(0 198 255 / 30%);
+    }
+
+    &.odd {
+        background: rgb(56 239 125 / 15%);
+        border: 1.5px solid #38ef7d;
+        color: #38ef7d;
+        box-shadow: 0 0 8px rgb(56 239 125 / 30%);
+    }
+}
+
+.eo-pattern-legend {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+
+    .eo-dot {
+        width: 1.4rem;
+        height: 1.4rem;
+        font-size: 0.6rem;
+    }
+}
+
+// ── Digit Badges ─────────────────────────────────────────────────────────────
+.eo-digit-badges-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.8rem;
+
+    @media (width <= 600px) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.eo-digit-badge {
+    background: rgb(0 0 0 / 30%);
+    border: 1px solid rgb(255 255 255 / 8%);
+    border-radius: 12px;
+    padding: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    text-align: center;
+
+    &__label {
+        font-size: 0.65rem;
+        color: #64748b;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    &__value {
+        font-size: 2rem;
+        font-weight: 900;
+        font-family: 'JetBrains Mono', monospace;
+    }
+
+    &__parity {
+        font-size: 0.6rem;
+        font-weight: 800;
+        color: #94a3b8;
+        letter-spacing: 1px;
+    }
+}
+
+// ── Power Bars ───────────────────────────────────────────────────────────────
+.eo-power-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+
+    &__labels {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #94a3b8;
+    }
+
+    &__track {
+        height: 8px;
+        background: rgb(255 255 255 / 5%);
+        border-radius: 100px;
+        overflow: hidden;
+    }
+
+    &__fill {
+        height: 100%;
+        border-radius: 100px;
+        transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+}
+
+.eo-recommendation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 0.3rem;
+    font-size: 0.8rem;
+    color: #94a3b8;
+
+    &__badge {
+        padding: 0.4rem 1rem;
+        border-radius: 100px;
+        font-size: 0.75rem;
+        font-weight: 900;
+        color: #fff;
+        letter-spacing: 0.5px;
+    }
+}
+
+// ── Condition Row ─────────────────────────────────────────────────────────────
+.eo-condition-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+    color: #94a3b8;
+}
+
+.eo-select {
+    background: rgb(0 0 0 / 40%);
+    border: 1px solid rgb(255 255 255 / 15%);
+    border-radius: 8px;
+    color: #fff;
+    padding: 0.45rem 0.8rem;
+    font-size: 0.82rem;
+    outline: none;
+    cursor: pointer;
+}
+
+.eo-input {
+    background: rgb(0 0 0 / 40%);
+    border: 1px solid rgb(255 255 255 / 15%);
+    border-radius: 8px;
+    color: #fff;
+    padding: 0.45rem 0.8rem;
+    font-size: 0.82rem;
+    width: 80px;
+    outline: none;
+
+    &:focus {
+        border-color: #00c6ff;
+    }
+}
+
+// ── Condition Status ──────────────────────────────────────────────────────────
+.eo-condition-status {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 0.6rem 0.9rem;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+
+    &__dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    &.met {
+        background: rgb(16 185 129 / 10%);
+        border: 1px solid rgb(16 185 129 / 30%);
+        color: #10b981;
+
+        .eo-condition-status__dot {
+            background: #10b981;
+            box-shadow: 0 0 6px #10b981;
+        }
+    }
+
+    &.not-met {
+        background: rgb(100 116 139 / 10%);
+        border: 1px solid rgb(100 116 139 / 20%);
+        color: #64748b;
+
+        .eo-condition-status__dot {
+            background: #64748b;
+        }
+    }
+}
+
+// ── Entry Tabs ────────────────────────────────────────────────────────────────
+.eo-entry-tabs {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.eo-entry-tab-btn {
+    background: rgb(255 255 255 / 3%);
+    border: 1px solid rgb(255 255 255 / 8%);
+    border-radius: 10px;
+    color: rgb(255 255 255 / 50%);
+    padding: 0.6rem 0.9rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.25s ease;
+
+    &:hover {
+        border-color: rgb(255 255 255 / 20%);
+        color: #fff;
+    }
+
+    &.active {
+        background: rgb(0 198 255 / 12%);
+        border-color: rgb(0 198 255 / 40%);
+        color: #00c6ff;
+        box-shadow: 0 0 12px rgb(0 198 255 / 15%);
+    }
+}
+
+.eo-entry-desc {
+    font-size: 0.78rem;
+    color: #94a3b8;
+    line-height: 1.5;
+    background: rgb(0 0 0 / 20%);
+    padding: 0.7rem;
+    border-radius: 8px;
+    border-left: 3px solid #00c6ff;
+}
+
+.eo-entry-signal {
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0.6rem 0.9rem;
+    border-radius: 10px;
+    background: rgb(244 63 94 / 8%);
+    border: 1px solid rgb(244 63 94 / 25%);
+    color: #f43f5e;
+    transition: all 0.3s ease;
+
+    &.triggered {
+        background: rgb(16 185 129 / 10%);
+        border-color: rgb(16 185 129 / 30%);
+        color: #10b981;
+        animation: pulse-green 2s infinite;
+    }
+}
+
+// ── Execution Area ────────────────────────────────────────────────────────────
+.eo-exec-row {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 0.85rem;
+    color: #94a3b8;
+}
+
+.eo-trade-signal {
+    font-size: 0.88rem;
+    font-weight: 800;
+    padding: 0.8rem;
+    border-radius: 12px;
+    background: rgb(100 116 139 / 8%);
+    border: 1px solid rgb(100 116 139 / 20%);
+    color: #64748b;
+    text-align: center;
+    transition: all 0.3s ease;
+
+    &.active {
+        background: rgb(0 198 255 / 10%);
+        border-color: rgb(0 198 255 / 40%);
+        color: #00c6ff;
+        animation: pulse-blue 2s infinite;
+    }
+}
+
+.eo-exec-btns {
+    display: flex;
+    gap: 0.8rem;
+}
+
+.eo-btn-primary {
+    flex: 1;
+    padding: 0.9rem;
+    border-radius: 12px;
+    border: none;
+    font-weight: 900;
+    font-size: 0.9rem;
+    cursor: pointer;
+    background: linear-gradient(135deg, #0072ff, #00c6ff);
+    color: #fff;
+    box-shadow: 0 6px 20px rgb(0 198 255 / 30%);
+    transition: all 0.3s ease;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgb(0 198 255 / 50%);
+    }
+
+    &.active {
+        background: linear-gradient(135deg, #f43f5e, #fb923c);
+        box-shadow: 0 6px 20px rgb(244 63 94 / 30%);
+    }
+}
+
+.eo-btn-secondary {
+    flex: 1;
+    padding: 0.9rem;
+    border-radius: 12px;
+    border: 1px solid rgb(255 255 255 / 15%);
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    background: rgb(255 255 255 / 5%);
+    color: #fff;
+    transition: all 0.3s ease;
+
+    &:hover {
+        background: rgb(255 255 255 / 10%);
+    }
+
+    &:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+}
+
+// ── Animations ────────────────────────────────────────────────────────────────
+@keyframes pulse-green {
+    0% {
+        box-shadow: 0 0 0 0 rgb(16 185 129 / 40%);
+    }
+
+    70% {
+        box-shadow: 0 0 0 8px rgb(16 185 129 / 0%);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgb(16 185 129 / 0%);
+    }
+}
+
+@keyframes pulse-blue {
+    0% {
+        box-shadow: 0 0 0 0 rgb(0 198 255 / 40%);
+    }
+
+    70% {
+        box-shadow: 0 0 0 8px rgb(0 198 255 / 0%);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgb(0 198 255 / 0%);
+    }
+}
+

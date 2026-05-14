@@ -1,0 +1,106 @@
+@use '@/components/shared/styles/_mixins.scss' as *;
+@use 'components/shared/styles/mixins' as *;
+
+.analysis-tool {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+    color: var(--text-general);
+
+    &__header {
+        margin-bottom: 2rem;
+
+        h2 {
+            font-size: 2.4rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, #ff4081, #ff9100);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p {
+            color: var(--text-less-prominent);
+            font-size: 1.4rem;
+        }
+    }
+
+    &__tabs {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: to-rem(32px);
+        padding: to-rem(8px);
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(to-rem(10px));
+        border-radius: to-rem(12px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        overflow-x: auto;
+
+        button {
+            padding: to-rem(16px) to-rem(32px);
+            border-radius: to-rem(8px);
+            border: none;
+            background: transparent;
+            color: var(--text-general);
+            cursor: pointer;
+            font-size: 1.4rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+
+            &::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(45deg, rgba(255, 64, 129, 0.2), rgba(255, 145, 0, 0.2));
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+
+            &:hover::before {
+                opacity: 1;
+            }
+
+            &.active {
+                background: linear-gradient(90deg, #ff4081, #ff9100);
+                color: #ffffff;
+                font-weight: bold;
+                box-shadow: 0 4px 15px rgba(255, 64, 129, 0.3);
+
+                &::before {
+                    display: none;
+                }
+            }
+        }
+    }
+
+    &__content {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.02);
+        backdrop-filter: blur(to-rem(20px));
+        border-radius: to-rem(16px);
+        padding: to-rem(32px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 to-rem(8px) to-rem(32px) 0 rgba(0, 0, 0, 0.3);
+        overflow-y: auto;
+        animation: fade-in 0.5s ease;
+
+        @keyframes fade-in {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    }
+}
+

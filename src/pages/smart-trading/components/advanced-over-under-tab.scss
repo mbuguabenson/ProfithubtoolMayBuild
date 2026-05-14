@@ -1,0 +1,779 @@
+@use '@/components/shared/styles/_mixins.scss' as *;
+.advanced-over-under-tab {
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(10, 10, 30, 0.95) 0%, rgba(20, 20, 40, 0.98) 100%);
+    min-height: 100vh;
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+    // Premium Market Header
+    .premium-market-header {
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+
+        @media (max-width: 768px) {
+            grid-template-columns: 1fr;
+        }
+
+        .market-select-glass,
+        .price-display-glass,
+        .digit-display-glass {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+
+            label,
+            .lbl {
+                font-size: 0.7rem;
+                font-weight: 600;
+                opacity: 0.6;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            select {
+                background: transparent;
+                border: none;
+                color: #fff;
+                font-size: 0.95rem;
+                font-weight: 500;
+                outline: none;
+                cursor: pointer;
+
+                option {
+                    background: #1a1a2e;
+                    color: #fff;
+                }
+            }
+
+            .val {
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: #0ea5e9;
+            }
+
+            .digit-box {
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 8px;
+                font-size: 1.3rem;
+                font-weight: 700;
+                background: rgba(168, 85, 247, 0.2);
+                border: 2px solid rgba(168, 85, 247, 0.5);
+                box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
+            }
+        }
+    }
+
+    // Tab Header
+    .tab-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+
+        .tab-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+
+            .icon {
+                font-size: 1.8rem;
+            }
+        }
+
+        .signal-badge {
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+
+            &.neutral {
+                background: rgba(120, 120, 120, 0.3);
+                color: #999;
+                border: 2px solid rgba(120, 120, 120, 0.5);
+            }
+
+            &.under {
+                background: rgba(59, 130, 246, 0.2);
+                color: rgb(59, 130, 246);
+                border: 2px solid rgb(59, 130, 246);
+                box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+            }
+
+            &.over {
+                background: rgba(34, 197, 94, 0.2);
+                color: rgb(34, 197, 94);
+                border: 2px solid rgb(34, 197, 94);
+                box-shadow: 0 0 20px rgba(34, 197, 94, 0.4);
+            }
+        }
+    }
+
+    // Last Digits Section
+    .last-digits-section {
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+
+        .section-label {
+            font-size: 0.85rem;
+            opacity: 0.7;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .digits-row {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+
+            .digit-chip {
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 8px;
+                font-size: 1rem;
+                font-weight: 700;
+                border: 2px solid;
+                transition: all 0.3s ease;
+
+                &.d-0 {
+                    background: rgba(6, 182, 212, 0.2);
+                    border-color: rgb(6, 182, 212);
+                    color: rgb(6, 182, 212);
+                }
+                &.d-1 {
+                    background: rgba(59, 130, 246, 0.2);
+                    border-color: rgb(59, 130, 246);
+                    color: rgb(59, 130, 246);
+                }
+                &.d-2 {
+                    background: rgba(139, 92, 246, 0.2);
+                    border-color: rgb(139, 92, 246);
+                    color: rgb(139, 92, 246);
+                }
+                &.d-3 {
+                    background: rgba(236, 72, 153, 0.2);
+                    border-color: rgb(236, 72, 153);
+                    color: rgb(236, 72, 153);
+                }
+                &.d-4 {
+                    background: rgba(34, 197, 94, 0.2);
+                    border-color: rgb(34, 197, 94);
+                    color: rgb(34, 197, 94);
+                }
+                &.d-5 {
+                    background: rgba(249, 115, 22, 0.2);
+                    border-color: rgb(249, 115, 22);
+                    color: rgb(249, 115, 22);
+                }
+                &.d-6 {
+                    background: rgba(234, 179, 8, 0.2);
+                    border-color: rgb(234, 179, 8);
+                    color: rgb(234, 179, 8);
+                }
+                &.d-7 {
+                    background: rgba(34, 197, 94, 0.2);
+                    border-color: rgb(34, 197, 94);
+                    color: rgb(34, 197, 94);
+                }
+                &.d-8 {
+                    background: rgba(16, 185, 129, 0.2);
+                    border-color: rgb(16, 185, 129);
+                    color: rgb(16, 185, 129);
+                }
+                &.d-9 {
+                    background: rgba(99, 102, 241, 0.2);
+                    border-color: rgb(99, 102, 241);
+                    color: rgb(99, 102, 241);
+                }
+            }
+        }
+    }
+
+    // Main Analysis Display
+    .main-analysis-display {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+
+        @media (max-width: 768px) {
+            grid-template-columns: 1fr;
+        }
+
+        .analysis-card {
+            padding: to-rem(20px);
+            border-radius: to-rem(16px);
+            border: to-rem(2px) solid;
+            text-align: center;
+            transition: all 0.3s ease;
+
+            &.under-card {
+                background: rgba(59, 130, 246, 0.1);
+                border-color: rgba(59, 130, 246, 0.5);
+
+                .percentage-display {
+                    color: rgb(59, 130, 246);
+                }
+
+                .under-fill {
+                    background: linear-gradient(90deg, rgb(59, 130, 246), rgb(37, 99, 235));
+                }
+            }
+
+            &.over-card {
+                background: rgba(34, 197, 94, 0.1);
+                border-color: rgba(34, 197, 94, 0.5);
+
+                .percentage-display {
+                    color: rgb(34, 197, 94);
+                }
+
+                .over-fill {
+                    background: linear-gradient(90deg, rgb(34, 197, 94), rgb(22, 163, 74));
+                }
+            }
+
+            .percentage-display {
+                font-size: 3.5rem;
+                font-weight: 700;
+                margin-bottom: 0.5rem;
+                line-height: 1;
+            }
+
+            .card-label {
+                font-size: 1rem;
+                opacity: 0.9;
+                margin-bottom: 1rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+
+                .trend-icon {
+                    font-size: 1.2rem;
+                }
+            }
+
+            .progress-bar {
+                height: to-rem(12px);
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: to-rem(8px);
+                overflow: hidden;
+                margin-bottom: to-rem(10px);
+
+                .progress-fill {
+                    height: 100%;
+                    transition: width 0.5s ease;
+                    border-radius: 8px;
+                }
+            }
+
+            .strongest-label {
+                font-size: 0.85rem;
+                opacity: 0.7;
+            }
+        }
+    }
+
+    // Metrics Row
+    .metrics-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+
+        @media (max-width: 768px) {
+            grid-template-columns: 1fr;
+        }
+
+        .metric-box {
+            padding: 1.25rem;
+            border-radius: 12px;
+            background: rgba(168, 85, 247, 0.1);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            text-align: center;
+
+            .metric-label {
+                font-size: 0.75rem;
+                opacity: 0.7;
+                margin-bottom: 0.5rem;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .metric-value {
+                font-size: 2rem;
+                font-weight: 700;
+                color: rgb(168, 85, 247);
+            }
+        }
+    }
+
+    // Predicted Section
+    .predicted-section {
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+
+        .section-label {
+            font-size: 0.85rem;
+            opacity: 0.7;
+            margin-bottom: 0.75rem;
+        }
+
+        .contracts-row {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+
+            .contract-chip {
+                padding: 0.75rem 1.5rem;
+                border-radius: 8px;
+                font-weight: 600;
+                font-size: 0.9rem;
+                border: 2px solid;
+
+                &.under {
+                    background: rgba(59, 130, 246, 0.2);
+                    border-color: rgb(59, 130, 246);
+                    color: rgb(59, 130, 246);
+                }
+
+                &.over {
+                    background: rgba(34, 197, 94, 0.2);
+                    border-color: rgb(34, 197, 94);
+                    color: rgb(34, 197, 94);
+                }
+            }
+        }
+    }
+
+    // How It Works
+    .how-it-works {
+        margin-bottom: 1.5rem;
+        padding: 1.5rem;
+        background: rgba(249, 115, 22, 0.1);
+        border-radius: 12px;
+        border: 1px solid rgba(249, 115, 22, 0.3);
+
+        .how-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: rgb(249, 115, 22);
+        }
+
+        .how-text {
+            font-size: 0.85rem;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+    }
+
+    // Threshold Selector
+    .threshold-selector {
+        margin-bottom: 1.5rem;
+
+        .selector-label {
+            font-size: 0.85rem;
+            opacity: 0.7;
+            margin-bottom: 0.75rem;
+        }
+
+        .threshold-tabs {
+            display: flex;
+            gap: 0.75rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+
+            .threshold-tab {
+                padding: 1rem 1.5rem;
+                border-radius: 10px;
+                background: rgba(255, 255, 255, 0.05);
+                border: 2px solid rgba(255, 255, 255, 0.1);
+                cursor: pointer;
+                transition: all 0.3s ease;
+                min-width: 140px;
+                text-align: center;
+
+                &:hover {
+                    background: rgba(255, 255, 255, 0.1);
+                    transform: translateY(-2px);
+                }
+
+                &.active {
+                    background: rgb(168, 85, 247);
+                    border-color: rgb(168, 85, 247);
+                    box-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+                }
+
+                .tab-name {
+                    font-size: 0.9rem;
+                    font-weight: 600;
+                    margin-bottom: 0.25rem;
+                }
+
+                .tab-multiplier {
+                    font-size: 0.75rem;
+                    opacity: 0.8;
+                }
+            }
+        }
+    }
+
+    // Comparison Grid
+    .comparison-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+
+        @media (max-width: 1024px) {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        @media (max-width: 768px) {
+            grid-template-columns: 1fr;
+        }
+
+        .comparison-card {
+            padding: 1.5rem;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+
+            .card-title {
+                font-size: 0.9rem;
+                font-weight: 600;
+                margin-bottom: 1rem;
+                opacity: 0.9;
+            }
+
+            .comparison-bars {
+                margin-bottom: 1rem;
+
+                .bar-item {
+                    margin-bottom: 1rem;
+
+                    &:last-child {
+                        margin-bottom: 0;
+                    }
+
+                    .bar-header {
+                        display: flex;
+                        justify-content: space-between;
+                        margin-bottom: 0.5rem;
+                        font-size: 0.75rem;
+
+                        .bar-label {
+                            opacity: 0.7;
+                        }
+
+                        .bar-percent {
+                            font-weight: 600;
+                        }
+                    }
+
+                    .bar-track {
+                        height: 8px;
+                        background: rgba(255, 255, 255, 0.05);
+                        border-radius: 4px;
+                        overflow: hidden;
+
+                        .bar-fill {
+                            height: 100%;
+                            transition: width 0.5s ease;
+                            border-radius: 4px;
+
+                            &.under-fill {
+                                background: linear-gradient(90deg, rgb(59, 130, 246), rgb(37, 99, 235));
+                            }
+
+                            &.over-fill {
+                                background: linear-gradient(90deg, rgb(34, 197, 94), rgb(22, 163, 74));
+                            }
+                        }
+                    }
+                }
+            }
+
+            .card-metrics {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 0.75rem;
+                padding-top: 1rem;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+                .metric-item {
+                    &.full-width {
+                        grid-column: 1 / -1;
+                    }
+
+                    .metric-label {
+                        font-size: 0.7rem;
+                        opacity: 0.6;
+                        display: block;
+                        margin-bottom: 0.25rem;
+                    }
+
+                    .metric-value {
+                        font-size: 0.9rem;
+                        font-weight: 600;
+
+                        &.ev-value {
+                            font-size: 1.2rem;
+
+                            &.positive {
+                                color: rgb(34, 197, 94);
+                            }
+
+                            &.negative {
+                                color: rgb(239, 68, 68);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Risk Assessment Card
+    .risk-assessment-card {
+        padding: 1.5rem;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        margin-bottom: 1.5rem;
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .risk-metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+
+            @media (max-width: to-rem(768px)) {
+                grid-template-columns: 1fr;
+            }
+
+            .risk-metric {
+                .risk-label {
+                    font-size: 0.75rem;
+                    opacity: 0.7;
+                    margin-bottom: 0.5rem;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                }
+
+                .risk-value {
+                    font-size: 2rem;
+                    font-weight: 700;
+                    margin-bottom: 0.5rem;
+                }
+
+                .risk-bar {
+                    height: 8px;
+                    background: rgba(255, 255, 255, 0.05);
+                    border-radius: 4px;
+                    overflow: hidden;
+
+                    .risk-fill {
+                        height: 100%;
+                        transition: width 0.5s ease;
+                        border-radius: 4px;
+                        background: linear-gradient(90deg, rgb(168, 85, 247), rgb(147, 51, 234));
+
+                        &.low {
+                            background: linear-gradient(90deg, rgb(34, 197, 94), rgb(22, 163, 74));
+                        }
+
+                        &.medium {
+                            background: linear-gradient(90deg, rgb(234, 179, 8), rgb(202, 138, 4));
+                        }
+
+                        &.high {
+                            background: linear-gradient(90deg, rgb(239, 68, 68), rgb(220, 38, 38));
+                        }
+                    }
+                }
+            }
+        }
+
+        .overall-risk-badge {
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid;
+
+            &.low {
+                background: rgba(34, 197, 94, 0.1);
+                border-color: rgb(34, 197, 94);
+
+                .risk-badge-label {
+                    color: rgb(34, 197, 94);
+                }
+            }
+
+            &.medium {
+                background: rgba(234, 179, 8, 0.1);
+                border-color: rgb(234, 179, 8);
+
+                .risk-badge-label {
+                    color: rgb(234, 179, 8);
+                }
+            }
+
+            &.high {
+                background: rgba(239, 68, 68, 0.1);
+                border-color: rgb(239, 68, 68);
+
+                .risk-badge-label {
+                    color: rgb(239, 68, 68);
+                }
+            }
+
+            .risk-badge-label {
+                font-size: 1.2rem;
+                font-weight: 700;
+                margin-bottom: 0.5rem;
+                letter-spacing: 1px;
+            }
+
+            .risk-recommendation {
+                font-size: 0.85rem;
+                opacity: 0.9;
+            }
+        }
+    }
+
+    // Heatmap Card
+    .heatmap-card {
+        padding: 1.5rem;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        margin-bottom: 1.5rem;
+
+        .heatmap-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+
+            .card-title {
+                font-size: 1.1rem;
+                font-weight: 600;
+            }
+
+            .hide-btn {
+                padding: 0.5rem 1rem;
+                border-radius: 6px;
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                color: rgb(168, 85, 247);
+                cursor: pointer;
+                font-size: 0.85rem;
+                transition: all 0.3s ease;
+
+                &:hover {
+                    background: rgba(255, 255, 255, 0.1);
+                }
+            }
+        }
+
+        .heatmap-grid {
+            overflow-x: auto;
+
+            .heatmap-row {
+                display: grid;
+                grid-template-columns: 40px repeat(10, 40px);
+                gap: 2px;
+                margin-bottom: 2px;
+
+                &:first-child {
+                    margin-bottom: 4px;
+                }
+            }
+
+            .heatmap-cell {
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 0.75rem;
+                border-radius: 4px;
+
+                &.header-cell {
+                    background: rgba(255, 255, 255, 0.05);
+                    font-weight: 600;
+                    opacity: 0.7;
+                }
+
+                &.data-cell {
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+
+                    &:hover {
+                        transform: scale(1.1);
+                        z-index: 10;
+                    }
+                }
+            }
+        }
+    }
+
+    .show-heatmap-btn {
+        width: 100%;
+        padding: 1rem;
+        border-radius: 10px;
+        background: rgba(168, 85, 247, 0.2);
+        border: 2px solid rgba(168, 85, 247, 0.5);
+        color: rgb(168, 85, 247);
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        margin-bottom: 1.5rem;
+
+        &:hover {
+            background: rgba(168, 85, 247, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(168, 85, 247, 0.4);
+        }
+    }
+}
+

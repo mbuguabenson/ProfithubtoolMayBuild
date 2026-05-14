@@ -1,0 +1,169 @@
+<xml xmlns="https://developers.google.com/blockly/xml" is_dbot="true" collection="false">
+  <variables>
+    <variable id="stake">Stake</variable>
+    <variable id="multiplier">Multiplier</variable>
+    <variable id="target_profit">Target Profit</variable>
+    <variable id="stop_loss">Stop Loss</variable>
+    <variable id="current_stake">Current Stake</variable>
+    <variable id="target_digit">Target Digit (Rank 3)</variable>
+    <variable id="appearance_count">Appearance Count</variable>
+  </variables>
+  <block type="trade_definition" id="trade_def" deletable="false" x="0" y="0">
+    <statement name="TRADE_OPTIONS">
+      <block type="trade_definition_market" id="market">
+        <field name="MARKET_LIST">synthetic_index</field>
+        <field name="SUBMARKET_LIST">random_index</field>
+        <field name="SYMBOL_LIST">1HZ100V</field>
+        <next>
+          <block type="trade_definition_tradetype" id="trade_type">
+            <field name="TRADETYPECAT_LIST">digits</field>
+            <field name="TRADETYPE_LIST">differs</field>
+            <next>
+              <block type="trade_definition_contracttype" id="contract_type">
+                <field name="TYPE_LIST">both</field>
+                <next>
+                  <block type="trade_definition_candleinterval" id="interval">
+                    <field name="CANDLEINTERVAL_LIST">60</field>
+                    <next>
+                      <block type="trade_definition_restartbuysell" id="restart">
+                        <field name="TIME_MACHINE_ENABLED">FALSE</field>
+                        <next>
+                          <block type="trade_definition_restartonerror" id="onerror">
+                            <field name="RESTARTONERROR">TRUE</field>
+                          </block>
+                        </next>
+                      </block>
+                    </next>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </statement>
+    <statement name="INITIALIZATION">
+      <block type="variables_set" id="init_stake">
+        <field name="VAR" id="stake">Stake</field>
+        <value name="VALUE"><block type="math_number"><field name="NUM">0.35</field></block></value>
+        <next>
+          <block type="variables_set" id="init_multiplier">
+            <field name="VAR" id="multiplier">Multiplier</field>
+            <value name="VALUE"><block type="math_number"><field name="NUM">2.1</field></block></value>
+            <next>
+              <block type="variables_set" id="init_tp">
+                <field name="VAR" id="target_profit">Target Profit</field>
+                <value name="VALUE"><block type="math_number"><field name="NUM">10</field></block></value>
+                <next>
+                  <block type="variables_set" id="init_sl">
+                    <field name="VAR" id="stop_loss">Stop Loss</field>
+                    <value name="VALUE"><block type="math_number"><field name="NUM">50</field></block></value>
+                    <next>
+                      <block type="variables_set" id="init_cs">
+                        <field name="VAR" id="current_stake">Current Stake</field>
+                        <value name="VALUE"><block type="variables_get"><field name="VAR" id="stake">Stake</field></block></value>
+                        <next>
+                          <block type="variables_set" id="init_count">
+                            <field name="VAR" id="appearance_count">Appearance Count</field>
+                            <value name="VALUE"><block type="math_number"><field name="NUM">0</field></block></value>
+                          </block>
+                        </next>
+                      </block>
+                    </next>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </statement>
+    <statement name="SUBMARKET">
+      <block type="trade_definition_tradeoptions" id="options">
+        <mutation has_first_barrier="false" has_second_barrier="false" has_prediction="true"></mutation>
+        <field name="DURATIONTYPE_LIST">t</field>
+        <value name="DURATION">
+          <block type="math_number"><field name="NUM">1</field></block>
+        </value>
+        <value name="AMOUNT">
+          <block type="variables_get"><field name="VAR" id="current_stake">Current Stake</field></block>
+        </value>
+        <value name="PREDICTION">
+          <block type="variables_get"><field name="VAR" id="target_digit">Target Digit (Rank 3)</field></block>
+        </value>
+      </block>
+    </statement>
+  </block>
+  <block type="before_purchase" id="before" x="0" y="800">
+    <statement name="BEFOREPURCHASE_STACK">
+      <block type="variables_set" id="update_target">
+        <field name="VAR" id="target_digit">Target Digit (Rank 3)</field>
+        <value name="VALUE">
+          <block type="digitByRank">
+            <value name="RANK"><block type="math_number"><field name="NUM">3</field></block></value>
+            <value name="TICK_COUNT"><block type="math_number"><field name="NUM">100</field></block></value>
+          </block>
+        </value>
+        <next>
+          <block type="controls_if" id="check_appearance">
+            <value name="IF0">
+              <block type="logic_compare">
+                <field name="OP">EQ</field>
+                <value name="A"><block type="last_digit"></block></value>
+                <value name="B"><block type="variables_get"><field name="VAR" id="target_digit">Target Digit (Rank 3)</field></block></value>
+              </block>
+            </value>
+            <statement name="DO0">
+              <block type="math_change" id="inc_count">
+                <field name="VAR" id="appearance_count">Appearance Count</field>
+                <value name="DELTA"><block type="math_number"><field name="NUM">1</Field></block></value>
+              </block>
+            </statement>
+            <next>
+              <block type="controls_if" id="trigger_trade">
+                <value name="IF0">
+                  <block type="logic_compare">
+                    <field name="OP">GTE</field>
+                    <value name="A"><block type="variables_get"><field name="VAR" id="appearance_count">Appearance Count</field></block></value>
+                    <value name="B"><block type="math_number"><field name="NUM">3</Field></block></value>
+                  </block>
+                </value>
+                <statement name="DO0">
+                  <block type="variables_set" id="reset_count_after">
+                    <field name="VAR" id="appearance_count">Appearance Count</field>
+                    <value name="VALUE"><block type="math_number"><field name="NUM">0</field></block></value>
+                    <next>
+                      <block type="purchase" id="buy">
+                        <field name="PURCHASE_LIST">DIGITDIFF</field>
+                        <field name="ALLOW_BULK_PURCHASE">no</field>
+                        <field name="NUM_TRADES">1</field>
+                      </block>
+                    </next>
+                  </block>
+                </statement>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </statement>
+  </block>
+  <block type="after_purchase" id="after" x="0" y="1400">
+    <statement name="AFTERPURCHASE_STACK">
+      <block type="variables_set" id="update_cs">
+        <field name="VAR" id="current_stake">Current Stake</field>
+        <value name="VALUE">
+          <block type="martingaleWithCompounding">
+            <field name="STRATEGY">standard</field>
+            <value name="BASE_STAKE"><block type="variables_get"><field name="VAR" id="stake">Stake</field></block></value>
+            <value name="MULTIPLIER"><block type="variables_get"><field name="VAR" id="multiplier">Multiplier</field></block></value>
+            <value name="PROFIT"><block type="read_details"><field name="DETAIL_INDEX">4</field></block></value>
+          </block>
+        </value>
+        <next>
+          <block type="trade_again"></block>
+        </next>
+      </block>
+    </statement>
+  </block>
+</xml>

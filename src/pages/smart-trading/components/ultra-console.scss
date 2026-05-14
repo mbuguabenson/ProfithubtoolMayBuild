@@ -1,0 +1,117 @@
+.ultra-console {
+    height: 300px;
+    overflow-y: auto;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(6, 182, 212, 0.3);
+    border-radius: 1.2rem;
+    padding: 1.5rem;
+    font-family: 'JetBrains Mono', monospace;
+
+    /* Custom Scrollbar */
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: rgba(6, 182, 212, 0.3);
+        border-radius: 3px;
+
+        &:hover {
+            background: rgba(6, 182, 212, 0.5);
+        }
+    }
+
+    .console-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        color: rgba(255, 255, 255, 0.4);
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        p {
+            font-size: 1.4rem;
+            margin: 0;
+        }
+    }
+
+    .console-log {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.8rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        font-size: 1.2rem;
+        animation: slideIn 0.3s ease-out;
+
+        &:last-child {
+            border-bottom: none;
+        }
+
+        .log-time {
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 600;
+            min-width: 120px;
+        }
+
+        .log-icon {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .log-message {
+            flex: 1;
+            color: #ffffff;
+        }
+
+        &.console-log-info {
+            .log-icon {
+                color: #00c6ff;
+            }
+        }
+
+        &.console-log-success {
+            .log-icon {
+                color: #38ef7d;
+            }
+
+            .log-message {
+                color: #38ef7d;
+            }
+        }
+
+        &.console-log-error {
+            .log-icon {
+                color: #ef4444;
+            }
+
+            .log-message {
+                color: #ef4444;
+            }
+        }
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+

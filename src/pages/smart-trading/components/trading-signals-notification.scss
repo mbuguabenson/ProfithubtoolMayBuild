@@ -1,0 +1,164 @@
+.trading-signals-notification {
+    position: relative;
+    background: rgba(255, 255, 255, 0.03);
+    border: 2px solid;
+    border-radius: 1.6rem;
+    padding: 1.6rem;
+    margin-bottom: 1.6rem;
+    backdrop-filter: blur(10px);
+    animation: slideIn 0.3s ease-out;
+    overflow: hidden;
+
+    .signal-header {
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+        margin-bottom: 1.2rem;
+
+        .signal-icon {
+            font-size: 2.4rem;
+            flex-shrink: 0;
+        }
+
+        .signal-title {
+            flex: 1;
+
+            h4 {
+                margin: 0 0 0.4rem 0;
+                font-size: 1.6rem;
+                font-weight: 700;
+                color: var(--text-prominent);
+            }
+
+            .confidence {
+                font-size: 1.2rem;
+                font-weight: 600;
+            }
+        }
+    }
+
+    .signal-body {
+        display: flex;
+        flex-direction: column;
+        gap: 1.2rem;
+
+        .signal-instruction {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            padding: 1.2rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 0.8rem;
+
+            .label {
+                font-size: 1.2rem;
+                color: var(--text-less-prominent);
+                font-weight: 600;
+            }
+
+            .value {
+                font-size: 1.4rem;
+                color: var(--text-prominent);
+                font-weight: 500;
+            }
+        }
+
+        .signal-digit {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.2rem;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 0.8rem;
+
+            .label {
+                font-size: 1.3rem;
+                color: var(--text-less-prominent);
+                font-weight: 600;
+            }
+
+            .digit-value {
+                font-size: 2.4rem;
+                font-weight: 800;
+                color: #a78bfa;
+                font-family: 'Roboto Mono', monospace;
+            }
+        }
+
+        .signal-levels {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.8rem;
+
+            @media (max-width: 768px) {
+                grid-template-columns: 1fr;
+            }
+
+            .level {
+                display: flex;
+                flex-direction: column;
+                gap: 0.4rem;
+                padding: 0.8rem;
+                background: rgba(255, 255, 255, 0.02);
+                border-radius: 0.8rem;
+                border: 1px solid rgba(255, 255, 255, 0.05);
+
+                .label {
+                    font-size: 1.1rem;
+                    font-weight: 600;
+                    opacity: 0.8;
+                }
+
+                .value {
+                    font-size: 1.3rem;
+                    font-weight: 700;
+                    color: var(--text-prominent);
+                }
+
+                &.entry {
+                    border-color: rgba(16, 185, 129, 0.3);
+                    background: rgba(16, 185, 129, 0.05);
+                }
+
+                &.exit {
+                    border-color: rgba(59, 130, 246, 0.3);
+                    background: rgba(59, 130, 246, 0.05);
+                }
+
+                &.stop {
+                    border-color: rgba(239, 68, 68, 0.3);
+                    background: rgba(239, 68, 68, 0.05);
+                }
+            }
+        }
+    }
+
+    .signal-progress-bar {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.1);
+        overflow: hidden;
+
+        .progress-fill {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+

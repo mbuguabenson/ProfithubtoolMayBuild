@@ -1,0 +1,59 @@
+import React from 'react';
+import { observer } from 'mobx-react-lite';
+import Dialog from '@/components/shared_ui/dialog';
+import { useStore } from '@/hooks/useStore';
+import { Localize, localize } from '@deriv-com/translations';
+import { useDevice } from '@deriv-com/ui';
+import WorkspaceGroup from './workspace-group';
+
+const Toolbar = observer(() => {
+    const { run_panel, toolbar } = useStore();
+    const { isDesktop } = useDevice();
+    const { is_dialog_open, closeResetDialog, onResetOkButtonClick: onOkButtonClick } = toolbar;
+    const { is_running } = run_panel;
+    const confirm_button_text = is_running ? localize('Yes') : localize('OK');
+    const cancel_button_text = is_running ? localize('No') : localize('Cancel');
+    return (
+        <React.Fragment>
+            {isDesktop ? (
+                <div className='toolbar dashboard__toolbar' data-testid='dt_dashboard_toolbar'>
+                    <div className='toolbar__section'>
+                        <WorkspaceGroup />
+                    </div>
+                </div>
+            ) : (
+                <WorkspaceGroup />
+            )}
+            <Dialog
+                portal_element_id='modal_root'
+                title={localize('Are you sure?')}
+                is_visible={is_dialog_open}
+                confirm_button_text={confirm_button_text}
+                onConfirm={onOkButtonClick}
+                cancel_button_text={cancel_button_text}
+                onCancel={closeResetDialog}
+                is_mobile_full_width={false}
+                className={'toolbar__dialog'}
+                has_close_icon
+                login={() => {}}
+            >
+                {is_running ? (
+                    <Localize
+                        i18n_default_text='The workspace will be reset to the default strategy and any unsaved changes will be lost. <0>Note: This will not affect your running bot.</0>'
+                        components={[
+                            <div
+                                key={0}
+                                className='toolbar__dialog-text--second'
+                                data-testid='dt_toolbar_dialog_text_second'
+                            />,
+                        ]}
+                    />
+                ) : (
+                    <Localize i18n_default_text='Any unsaved changes will be lost.' />
+                )}
+            </Dialog>
+        </React.Fragment>
+    );
+});
+
+export default Toolbar;

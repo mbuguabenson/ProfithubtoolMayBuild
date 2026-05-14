@@ -1,0 +1,137 @@
+@use '@/components/shared/styles/mixins' as *;
+
+.app-header {
+    &__logo-container {
+        padding-inline-start: 1.5rem;
+        padding-inline-end: 2.5rem;
+        border-inline-end: 1px solid rgba(255, 255, 255, 0.1);
+        height: 100%;
+        display: flex;
+        align-items: center;
+        position: relative;
+        background: rgba(255, 255, 255, 0.02);
+        backdrop-filter: blur(5px);
+
+        @include mobile-or-tablet-screen {
+            display: none;
+        }
+    }
+}
+
+.header-branding-modern {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    padding: 0.5rem 0;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+
+    .brand-text-wrap {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.1;
+    }
+
+    .brand-main {
+        font-family: 'Outfit', 'Inter', sans-serif;
+        font-size: 2.4rem;
+        font-weight: 900;
+        letter-spacing: 0.12em;
+        background: linear-gradient(135deg, #fff 0%, #488cfb 50%, #b794f4 100%);
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-transform: uppercase;
+        position: relative;
+        display: flex;
+        align-items: center;
+        animation: text-shine 3s linear infinite;
+
+        .char-p {
+            -webkit-text-fill-color: #488cfb;
+            margin-right: 2px;
+            filter: drop-shadow(0 0 8px rgba(72, 140, 251, 0.8));
+        }
+    }
+
+    .brand-sub {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.95rem;
+        font-weight: 700;
+        letter-spacing: 0.55em;
+        color: #b794f4;
+        text-transform: uppercase;
+        margin-top: 0.2rem;
+        padding-left: 2px;
+        opacity: 0.9;
+        text-shadow: 0 0 10px rgba(183, 148, 244, 0.3);
+    }
+
+    .brand-glow-effect {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 140%;
+        height: 140%;
+        background: radial-gradient(circle, rgba(72, 140, 251, 0.15) 0%, transparent 70%);
+        pointer-events: none;
+        opacity: 0.4;
+        filter: blur(10px);
+        transition: all 0.4s ease;
+    }
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -20%;
+        width: 140%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        transform: skewX(-20deg);
+        animation: light-sweep 4s infinite;
+        pointer-events: none;
+    }
+
+    &:hover {
+        transform: translateY(-1px) scale(1.02);
+
+        .brand-main {
+            background-position: right center;
+        }
+
+        .brand-sub {
+            letter-spacing: 0.6em;
+            color: #fff;
+            text-shadow: 0 0 15px rgba(72, 140, 251, 0.6);
+        }
+
+        .brand-glow-effect {
+            opacity: 0.8;
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+    }
+}
+
+@keyframes text-shine {
+    to { background-position: 200% center; }
+}
+
+@keyframes light-sweep {
+    0% { left: -120%; }
+    20%, 100% { left: 120%; }
+}
+
+@include mobile-or-tablet-screen {
+    .header-branding-modern {
+        .brand-main {
+            font-size: 1.8rem;
+        }
+        .brand-sub {
+            font-size: 0.75rem;
+        }
+    }
+}

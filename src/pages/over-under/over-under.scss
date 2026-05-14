@@ -1,0 +1,266 @@
+@use '@/components/shared/styles/mixins' as *;
+
+.over-under-tab.comprehensive-dashboard {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    background: radial-gradient(circle at 50% 0%, #0f172a 0%, #020617 100%);
+    color: #f1f5f9;
+    min-height: 100vh;
+    max-width: 1400px;
+    margin: 0 auto;
+    font-family: 'Inter', sans-serif;
+
+    @include mobile-or-tablet-screen {
+        padding: 1rem;
+        gap: 1rem;
+    }
+
+    .replica-card {
+        background: rgba(15, 23, 42, 0.4);
+        border: 1px solid rgba(72, 140, 251, 0.15);
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(10px);
+    }
+
+    .card-title { font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; margin-bottom: 1.5rem; }
+
+    // --- 1. Header ---
+    .header-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+        padding: 2rem;
+        .header-top { display: flex; align-items: center; gap: 1rem; .app-icon { font-size: 1.8rem; } .title { font-size: 1.6rem; font-weight: 900; margin: 0; } }
+        .status-row {
+            display: flex; align-items: center; gap: 2rem;
+            .status-badge {
+                background: #1e293b;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                padding: 0.6rem 2.5rem;
+                border-radius: 8px;
+                font-weight: 800;
+                font-size: 0.9rem;
+                color: rgba(255, 255, 255, 0.6);
+                text-transform: uppercase;
+                letter-spacing: 1px;
+
+                &.active {
+                    background: #f59e0b;
+                    color: white;
+                    border-color: #f59e0b;
+                    box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+                }
+            }
+
+            .phase-counter {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                background: rgba(72, 140, 251, 0.1);
+                border: 1px solid rgba(72, 140, 251, 0.2);
+                padding: 0.5rem 1rem;
+                border-radius: 6px;
+                font-size: 0.75rem;
+                font-weight: 800;
+                color: #60a5fa;
+            }
+            .symbol-select-minimal { background: transparent; border: none; color: #488cfb; font-weight: 800; cursor: pointer; }
+        }
+    }
+
+    // --- 2. Distribution Circles ---
+    .dist-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        .dist-circle-item {
+            flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; position: relative; cursor: pointer;
+            &:hover { transform: translateY(-5px); .svg-wrap { filter: drop-shadow(0 0 8px currentColor); } }
+            &.active { .svg-wrap { filter: drop-shadow(0 0 12px rgba(255,255,255,0.3)); } .digit { color: #fff; } }
+            .svg-wrap { position: relative; width: 56px; height: 56px; .label-inner { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; .digit { font-size: 1.1rem; font-weight: 950; } .pct { font-size: 0.55rem; opacity: 0.6; } } }
+            .count { font-size: 0.6rem; opacity: 0.3; }
+            .now-badge { position: absolute; top: -10px; background: #f97316; color: white; font-size: 0.5rem; padding: 2px 6px; border-radius: 100px; }
+        }
+    }
+
+    // --- 3. History Feed ---
+    .digits-strip {
+        display: flex; justify-content: space-between; gap: 6px;
+        .digit-box { flex: 1; aspect-ratio: 1.2; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: white; }
+    }
+
+    // --- 4. Main Grid ---
+    .main-dashboard-grid {
+        display: grid; grid-template-columns: 1.4fr 1fr; gap: 2rem;
+        @include mobile-or-tablet-screen { grid-template-columns: 1fr; gap: 1.5rem; }
+        .grid-col { display: flex; flex-direction: column; gap: 2rem; }
+    }
+
+    .analysis-card {
+        padding: 2.5rem;
+        .split-row {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;
+            .split-col {
+                display: flex; flex-direction: column; align-items: center;
+                .percentage-val { font-size: 3rem; font-weight: 950; line-height: 1; margin-bottom: 0.5rem; }
+                .label-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; .label { font-size: 1rem; font-weight: 800; } }
+                .strongest { font-size: 0.7rem; opacity: 0.4; font-weight: 800; margin-bottom: 1.5rem; }
+                .progress-track { width: 100%; height: 12px; background: rgba(0,0,0,0.3); border-radius: 100px; overflow: hidden; margin-bottom: 1.5rem; .fill { height: 100%; border-radius: 100px; transition: width 0.5s; } }
+                .contracts-box {
+                    width: 100%; background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 10px;
+                    .title { font-size: 0.6rem; opacity: 0.4; font-weight: 800; margin-bottom: 0.8rem; display: block; }
+                    .tag-row { display: flex; flex-wrap: wrap; gap: 0.5rem; .tag { background: rgba(72, 140, 251, 0.1); border: 1px solid rgba(72, 140, 251, 0.3); color: #60a5fa; font-size: 0.6rem; font-weight: 900; padding: 2px 10px; border-radius: 100px; } }
+                }
+                &.under { .percentage-val, .label { color: #3b82f6; } .fill { background: #3b82f6; } }
+                &.over { .percentage-val, .label { color: #10b981; } .fill { background: #10b981; } .contracts-box .tag { color: #10b981; border-color: rgba(16,185,129,0.3); background: rgba(16,185,129,0.1); } }
+            }
+        }
+    }
+
+    .chart-container-replica { background: #f1f5f9; padding: 1.5rem 1rem 0.5rem; border-radius: 10px; }
+
+    .prediction-power-card {
+        .power-title { font-size: 0.9rem; font-weight: 900; color: #a855f7; text-align: center; margin-bottom: 1.5rem; }
+        .power-digit-selector-mini {
+            display: flex; justify-content: space-between; gap: 4px; margin-bottom: 1.5rem; background: rgba(0,0,0,0.2); padding: 0.5rem; border-radius: 10px;
+            .sel-btn-mini { flex: 1; aspect-ratio: 1; border: none; background: transparent; color: rgba(255,255,255,0.4); font-weight: 900; font-size: 0.8rem; cursor: pointer; border-radius: 6px; transition: all 0.2s; &.active { background: var(--color); color: white; box-shadow: 0 0 10px var(--color); } }
+        }
+        .power-metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; .metric { display: flex; flex-direction: column; .l { font-size: 0.6rem; opacity: 0.4; } .v { font-size: 1.2rem; font-weight: 900; color: #22d3ee; } } }
+        .group-bars-mini-replica {
+            display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 1.5rem;
+            .bar {
+                height: 28px; background: rgba(0,0,0,0.3); border-radius: 6px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: space-between; padding: 0 1rem;
+                .fill { position: absolute; left: 0; top: 0; height: 100%; opacity: 0.2; }
+                .label, .val { font-size: 0.7rem; font-weight: 800; position: relative; z-index: 2; }
+                &.over { .fill, .val { color: #10b981; } .fill { background: #10b981; } }
+                &.under { .fill, .val { color: #3b82f6; } .fill { background: #3b82f6; } }
+            }
+        }
+        .pattern-squares-mini { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; .pat-square { width: 24px; height: 24px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 950; &.pat--U, &.pat--O { background: #10b981; color: white; } &.pat--C { background: #f97316; } } }
+    }
+
+    .best-predictions-box {
+        .prediction-tags-flex {
+            display: flex; flex-direction: column; gap: 0.8rem;
+            .tag-item {
+                display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 10px; border: 1px solid rgba(251, 191, 36, 0.1);
+                .l { font-size: 0.6rem; opacity: 0.4; font-weight: 800; text-transform: uppercase; }
+                .v { font-size: 1.1rem; font-weight: 950; color: #fbbf24; }
+            }
+        }
+    }
+
+    // --- 5. Metrics Grid ---
+    .metrics-grid-replica {
+        display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
+        .metric-card {
+            background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+            .title { font-size: 0.65rem; opacity: 0.4; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
+            .value { font-size: 1.6rem; font-weight: 950; }
+            &.purple { border-color: rgba(168,85,247,0.3); .value { color: #a855f7; } }
+            &.orange { border-color: rgba(245,158,11,0.3); .value { color: #f59e0b; } }
+            &.blue { border-color: rgba(72,140,251,0.3); .value { color: #3b82f6; } }
+        }
+    }
+
+    // --- 6. Footer ---
+    .info-card {
+        .info-text { font-size: 0.75rem; line-height: 1.6; opacity: 0.5; margin-bottom: 1.5rem; strong { color: #fff; opacity: 1; } }
+        .meta-footer { display: flex; justify-content: center; gap: 2rem; font-size: 0.75rem; opacity: 0.4; font-weight: 800; }
+    }
+}
+
+// --- Loading State ---
+.over-under-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+    color: #fff;
+    text-align: center;
+
+    .loading-hud {
+        position: relative;
+        width: 120px;
+        height: 120px;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .circle-outer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 2px solid rgba(72, 140, 251, 0.1);
+            border-top-color: #488cfb;
+            border-radius: 50%;
+            animation: spin 2s linear infinite;
+        }
+
+        .circle-inner {
+            position: absolute;
+            width: 70%;
+            height: 70%;
+            border: 2px solid rgba(168, 85, 247, 0.1);
+            border-bottom-color: #a855f7;
+            border-radius: 50%;
+            animation: spin-reverse 1.5s linear infinite;
+        }
+
+        .icon-wrap {
+            z-index: 2;
+            color: #488cfb;
+            filter: drop-shadow(0 0 10px rgba(72, 140, 251, 0.5));
+            animation: pulse 2s ease-in-out infinite;
+        }
+    }
+
+    h3 {
+        font-size: 1.5rem;
+        font-weight: 900;
+        letter-spacing: 4px;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(90deg, #488cfb, #a855f7);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    p {
+        font-size: 0.9rem;
+        opacity: 0.5;
+        font-weight: 600;
+        letter-spacing: 1px;
+    }
+
+    .force-refresh-btn {
+        margin-top: 2rem;
+        padding: 0.8rem 1.5rem;
+        background: rgba(72, 140, 251, 0.1);
+        border: 1px solid rgba(72, 140, 251, 0.3);
+        color: #488cfb;
+        border-radius: 8px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: all 0.2s;
+        z-index: 10;
+
+        &:hover {
+            background: #488cfb;
+            color: #fff;
+            box-shadow: 0 0 15px rgba(72, 140, 251, 0.4);
+        }
+    }
+}
+
+@keyframes spin { 100% { transform: rotate(360deg); } }
+@keyframes spin-reverse { 100% { transform: rotate(-360deg); } }
+@keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } }

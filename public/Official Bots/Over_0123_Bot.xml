@@ -1,0 +1,239 @@
+<xml xmlns="https://developers.google.com/blockly/xml" is_dbot="true" collection="false">
+  <variables>
+    <variable id="stake">Stake</variable>
+    <variable id="multiplier">Multiplier</variable>
+    <variable id="prediction">Prediction</variable>
+    <variable id="current_stake">Current Stake</variable>
+    <variable id="power_over">Over Power</variable>
+    <variable id="prev_power_over">Prev Over Power</variable>
+    <variable id="digit_list">Digit List</variable>
+    <variable id="count_hits">Count Hits</variable>
+    <variable id="i">i</variable>
+      <variable id="text">text</variable>
+  </variables>
+  <block type="trade_definition" id="trade_def" deletable="false" x="0" y="0">
+    <statement name="TRADE_OPTIONS">
+      <block type="trade_definition_market" id="market">
+        <field name="MARKET_LIST">synthetic_index</field>
+        <field name="SUBMARKET_LIST">random_index</field>
+        <field name="SYMBOL_LIST">1HZ100V</field>
+        <next>
+          <block type="trade_definition_tradetype" id="trade_type">
+            <field name="TRADETYPECAT_LIST">digits</field>
+            <field name="TRADETYPE_LIST">overunder</field>
+            <next>
+              <block type="trade_definition_contracttype" id="contract_type">
+                <field name="TYPE_LIST">both</field>
+                <next>
+                  <block type="trade_definition_candleinterval" id="interval">
+                    <field name="CANDLEINTERVAL_LIST">60</field>
+                    <next>
+                      <block type="trade_definition_restartbuysell" id="restart">
+                        <field name="TIME_MACHINE_ENABLED">FALSE</field>
+                        <next>
+                          <block type="trade_definition_restartonerror" id="onerror">
+                            <field name="RESTARTONERROR">TRUE</field>
+                          </block>
+                        </next>
+                      </block>
+                    </next>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </statement>
+    <statement name="INITIALIZATION">
+      <block type="variables_set" id="init_stake">
+        <field name="VAR" id="stake">Stake</field>
+        <value name="VALUE"><block type="math_number"><field name="NUM">0.35</field></block></value>
+        <next>
+          <block type="variables_set" id="init_multiplier">
+            <field name="VAR" id="multiplier">Multiplier</field>
+            <value name="VALUE"><block type="math_number"><field name="NUM">2</field></block></value>
+            <next>
+              <block type="variables_set" id="init_pred">
+                <field name="VAR" id="prediction">Prediction</field>
+                <value name="VALUE"><block type="math_number"><field name="NUM">0</field></block></value>
+                <next>
+                  <block type="variables_set" id="init_cs">
+                    <field name="VAR" id="current_stake">Current Stake</field>
+                    <value name="VALUE"><block type="variables_get"><field name="VAR" id="stake">Stake</field></block></value>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </statement>
+    <statement name="SUBMARKET">
+      <block type="trade_definition_tradeoptions" id="options">
+        <mutation has_first_barrier="false" has_second_barrier="false" has_prediction="true"></mutation>
+        <field name="DURATIONTYPE_LIST">t</field>
+        <value name="DURATION">
+          <block type="math_number"><field name="NUM">1</field></block>
+        </value>
+        <value name="AMOUNT">
+          <block type="variables_get"><field name="VAR" id="current_stake">Current Stake</field></block>
+        </value>
+        <value name="PREDICTION">
+          <block type="variables_get"><field name="VAR" id="prediction">Prediction</field></block>
+        </value>
+      </block>
+    </statement>
+  </block>
+  <block type="before_purchase" id="before" x="0" y="800">
+    <statement name="BEFOREPURCHASE_STACK">
+      <block type="variables_set" id="get_list">
+        <field name="VAR" id="digit_list">Digit List</field>
+        <value name="VALUE"><block type="lastDigitList"></block></value>
+        <next>
+          <block type="variables_set" id="reset_count">
+            <field name="VAR" id="count_hits">Count Hits</field>
+            <value name="VALUE"><block type="math_number"><field name="NUM">0</field></block></value>
+            <next>
+              <block type="controls_for" id="loop">
+                <field name="VAR" id="i">i</field>
+                <value name="FROM"><block type="math_number"><field name="NUM">1</field></block></value>
+                <value name="TO"><block type="math_number"><field name="NUM">50</field></block></value>
+                <value name="BY"><block type="math_number"><field name="NUM">1</field></block></value>
+                <statement name="DO">
+                  <block type="controls_if" id="check_hits">
+                    <value name="IF0">
+                      <block type="logic_compare">
+                        <field name="OP">EQ</field>
+                        <value name="A">
+                          <block type="lists_getIndex">
+                            <mutation statement="false" at="true"></mutation>
+                            <field name="MODE">GET</field>
+                            <field name="WHERE">FROM_START</field>
+                            <value name="VALUE"><block type="variables_get"><field name="VAR" id="digit_list">Digit List</field></block></value>
+                            <value name="AT"><block type="variables_get"><field name="VAR" id="i">i</field></block></value>
+                          </block>
+                        </value>
+                        <value name="B"><block type="variables_get"><field name="VAR" id="prediction">Prediction</field></block></value>
+                      </block>
+                    </value>
+                    <statement name="DO0">
+                      <block type="math_change" id="inc_hits">
+                        <field name="VAR" id="count_hits">Count Hits</field>
+                        <value name="DELTA"><block type="math_number"><field name="NUM">1</field></block></value>
+                      </block>
+                    </statement>
+                  </block>
+                </statement>
+                <next>
+                  <block type="variables_set" id="calc_p_o">
+                    <field name="VAR" id="power_over">Over Power</field>
+                    <value name="VALUE">
+                      <block type="math_arithmetic">
+                        <field name="OP">MULTIPLY</field>
+                        <value name="A">
+                          <block type="math_arithmetic">
+                            <field name="OP">DIVIDE</field>
+                            <value name="A"><block type="variables_get"><field name="VAR" id="count_hits">Count Hits</field></block></value>
+                            <value name="B"><block type="math_number"><field name="NUM">50</field></block></value>
+                          </block>
+                        </value>
+                        <value name="B"><block type="math_number"><field name="NUM">100</field></block></value>
+                      </block>
+                    </value>
+                    <next>
+          <block type="notify" id="notify">
+            <field name="NOTIFICATION_TYPE">info</field>
+            <field name="NOTIFICATION_SOUND">silent</field>
+            <value name="MESSAGE">
+              <block type="text_join">
+                <mutation items="2"></mutation>
+                <value name="ADD0"><block type="text"><field name="TEXT">Over Power: </field></block></value>
+                <value name="ADD1"><block type="variables_get"><field name="VAR" id="power_over">Over Power</field></block></value>
+              </block>
+            </value>
+            <next>
+                          <block type="controls_if" id="trade_logic">
+                            <value name="IF0">
+                              <block type="logic_compare">
+                                <field name="OP">GTE</field>
+                                <value name="A"><block type="variables_get"><field name="VAR" id="power_over">Over Power</field></block></value>
+                                <value name="B"><block type="math_number"><field name="NUM">15</field></block></value>
+                              </block>
+                            </value>
+                            <statement name="DO0">
+                              <block type="purchase" id="buy">
+                                <field name="PURCHASE_LIST">DIGITOVER</field>
+                                <field name="ALLOW_BULK_PURCHASE">no</field>
+                                <field name="NUM_TRADES">1</field>
+                              </block>
+                            </statement>
+                            <next>
+                              <block type="controls_if" id="auto_switch">
+                                <mutation else="1"></mutation>
+                                <value name="IF0">
+                                  <block type="logic_compare">
+                                    <field name="OP">LT</field>
+                                    <value name="A"><block type="variables_get"><field name="VAR" id="prediction">Prediction</field></block></value>
+                                    <value name="B"><block type="math_number"><field name="NUM">3</field></block></value>
+                                  </block>
+                                </value>
+                                <statement name="DO0">
+                                  <block type="math_change" id="inc_pred">
+                                    <field name="VAR" id="prediction">Prediction</field>
+                                    <value name="DELTA"><block type="math_number"><field name="NUM">1</field></block></value>
+                                  </block>
+                                </statement>
+                                <statement name="ELSE">
+                                  <block type="variables_set" id="reset_pred">
+                                    <field name="VAR" id="prediction">Prediction</field>
+                                    <value name="VALUE"><block type="math_number"><field name="NUM">0</field></block></value>
+                                  </block>
+                                </statement>
+                              </block>
+                            </next>
+          </block>
+        </next>
+      </block>
+                    </next>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </statement>
+  </block>
+  <block type="after_purchase" id="after" x="0" y="1500">
+    <statement name="AFTERPURCHASE_STACK">
+      <block type="controls_if" id="check_win">
+        <mutation else="1"></mutation>
+        <value name="IF0">
+          <block type="contract_check_result"><field name="CHECK_RESULT">win</field></block>
+        </value>
+        <statement name="DO0">
+          <block type="variables_set" id="reset_stake">
+            <field name="VAR" id="current_stake">Current Stake</field>
+            <value name="VALUE"><block type="variables_get"><field name="VAR" id="stake">Stake</field></block></value>
+          </block>
+        </statement>
+        <statement name="ELSE">
+          <block type="variables_set" id="martingale">
+            <field name="VAR" id="current_stake">Current Stake</field>
+            <value name="VALUE">
+              <block type="math_arithmetic">
+                <field name="OP">MULTIPLY</field>
+                <value name="A"><block type="variables_get"><field name="VAR" id="current_stake">Current Stake</field></block></value>
+                <value name="B"><block type="variables_get"><field name="VAR" id="multiplier">Multiplier</field></block></value>
+              </block>
+            </value>
+          </block>
+        </statement>
+        <next>
+          <block type="trade_again"></block>
+        </next>
+      </block>
+    </statement>
+  </block>
+</xml>

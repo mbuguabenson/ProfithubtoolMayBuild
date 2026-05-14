@@ -1,0 +1,202 @@
+@use '@/components/shared/styles/_mixins.scss' as *;
+@use 'components/shared/styles/mixins' as *;
+
+.floating-window {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: rgb(4 8 20 / 95%);
+    border: 1px solid rgb(255 255 255 / 10%);
+    border-radius: to-rem(12px);
+    box-shadow:
+        0 to-rem(10px) to-rem(40px) rgb(0 0 0 / 50%),
+        inset 0 0 0 1px rgb(255 255 255 / 5%);
+    backdrop-filter: blur(to-rem(16px));
+    display: flex;
+    flex-direction: column;
+    font-family:
+        'Inter',
+        system-ui,
+        -apple-system,
+        sans-serif;
+    color: #f8fafc;
+    transition: box-shadow 0.3s ease;
+    will-change: transform, width, height;
+
+    &.top-window {
+        box-shadow:
+            0 15px 50px rgb(0 0 0 / 70%),
+            0 0 20px rgb(14 165 233 / 20%),
+            inset 0 0 0 1px rgb(255 255 255 / 10%);
+    }
+
+    &.minimized {
+        border-radius: 8px 8px 0 0;
+        resize: none !important; // Prevent native resize when minimized
+    }
+
+    &.maximized {
+        border-radius: 0;
+        resize: none !important;
+    }
+
+    /* CSS resize handle customization */
+    &::-webkit-resizer {
+        background-color: transparent;
+        border-bottom: 2px solid rgb(255 255 255 / 30%);
+        border-right: 2px solid rgb(255 255 255 / 30%);
+    }
+
+    .fw-header {
+        height: to-rem(40px);
+        min-height: to-rem(40px);
+        background: rgb(255 255 255 / 3%);
+        border-bottom: 1px solid rgb(255 255 255 / 5%);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 to-rem(16px);
+        cursor: grab;
+        user-select: none;
+        border-radius: to-rem(12px) to-rem(12px) 0 0;
+
+        &:active {
+            cursor: grabbing;
+        }
+
+        .fw-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            color: rgb(255 255 255 / 80%);
+        }
+
+        .fw-controls {
+            display: flex;
+            gap: to-rem(8px);
+
+            .fw-btn {
+                background: rgb(255 255 255 / 5%);
+                border: none;
+                color: rgb(255 255 255 / 60%);
+                width: to-rem(24px);
+                height: to-rem(24px);
+                border-radius: to-rem(4px);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                font-family: inherit;
+
+                &:hover {
+                    background: rgb(255 255 255 / 15%);
+                    color: #fff;
+                }
+
+                &.close:hover {
+                    background: rgb(244 63 94 / 80%);
+                    color: #fff;
+                }
+            }
+        }
+    }
+
+    .fw-content {
+        flex: 1;
+        overflow: auto;
+        position: relative;
+
+        /* Scrollbar styles for the content */
+        &::-webkit-scrollbar {
+            width: to-rem(8px);
+            height: to-rem(8px);
+        }
+
+        &::-webkit-scrollbar-track {
+            background: rgb(0 0 0 / 20%);
+            border-radius: to-rem(4px);
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: rgb(255 255 255 / 10%);
+            border-radius: to-rem(4px);
+
+            &:hover {
+                background: rgb(255 255 255 / 20%);
+            }
+        }
+    }
+
+    .fw-resize-handle {
+        position: absolute;
+        z-index: 100;
+        background: transparent;
+
+        &.n {
+            top: -5px;
+            left: 10px;
+            right: 10px;
+            height: 10px;
+            cursor: n-resize;
+        }
+
+        &.s {
+            bottom: -5px;
+            left: 10px;
+            right: 10px;
+            height: 10px;
+            cursor: s-resize;
+        }
+
+        &.e {
+            top: 10px;
+            bottom: 10px;
+            right: -5px;
+            width: 10px;
+            cursor: e-resize;
+        }
+
+        &.w {
+            top: 10px;
+            bottom: 10px;
+            left: -5px;
+            width: 10px;
+            cursor: w-resize;
+        }
+
+        &.nw {
+            top: -5px;
+            left: -5px;
+            width: 15px;
+            height: 15px;
+            cursor: nw-resize;
+        }
+
+        &.ne {
+            top: -5px;
+            right: -5px;
+            width: 15px;
+            height: 15px;
+            cursor: ne-resize;
+        }
+
+        &.sw {
+            bottom: -5px;
+            left: -5px;
+            width: 15px;
+            height: 15px;
+            cursor: sw-resize;
+        }
+
+        &.se {
+            bottom: -5px;
+            right: -5px;
+            width: 15px;
+            height: 15px;
+            cursor: se-resize;
+        }
+    }
+}
+

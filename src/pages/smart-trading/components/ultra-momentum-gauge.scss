@@ -1,0 +1,42 @@
+.ultra-momentum-gauge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+
+    .gauge-label {
+        font-size: 1.2rem;
+        color: rgba(255, 255, 255, 0.6);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-weight: 600;
+    }
+
+    .gauge-svg {
+        width: 160px;
+        height: 100px;
+
+        .gauge-arc {
+            filter: drop-shadow(0 0 8px currentColor);
+            transition:
+                stroke-dasharray 0.3s ease,
+                stroke 0.3s ease;
+        }
+
+        .gauge-needle {
+            filter: drop-shadow(0 0 4px currentColor);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .gauge-center {
+            filter: drop-shadow(0 0 6px currentColor);
+        }
+    }
+
+    .gauge-value {
+        font-size: 2.4rem;
+        font-weight: 900;
+        text-shadow: 0 0 15px currentColor;
+    }
+}
+

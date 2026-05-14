@@ -1,0 +1,162 @@
+.dev-blocker-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    background: radial-gradient(circle at center, #2c0a0a 0%, #0a0505 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    backdrop-filter: blur(20px);
+
+    &::before {
+        content: '';
+        position: absolute;
+        width: 400px;
+        height: 400px;
+        background: #ef4444;
+        filter: blur(150px);
+        opacity: 0.15;
+        top: 10%;
+        left: 10%;
+    }
+
+    &::after {
+        content: '';
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        background: #f59e0b;
+        filter: blur(150px);
+        opacity: 0.1;
+        bottom: 10%;
+        right: 10%;
+    }
+
+    .blocker-card {
+        width: 100%;
+        max-width: 600px;
+        background: rgba(20, 10, 10, 0.8);
+        border: 1px solid rgba(239, 68, 68, 0.1);
+        border-radius: 24px;
+        padding: 48px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        position: relative;
+        box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
+
+        .blocker-accent-line {
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #ef4444, transparent);
+            border-radius: 2px;
+            margin-bottom: 32px;
+        }
+    }
+
+    .blocker-badges {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 24px;
+
+        .badge {
+            padding: 8px 16px;
+            border-radius: 99px;
+            font-size: 11px;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: 1px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+
+            &--restricted {
+                background: rgba(239, 68, 68, 0.1);
+                color: #fca5a5;
+                .dot { width: 6px; height: 6px; border-radius: 50%; background: #ef4444; }
+            }
+
+            &--shield {
+                background: rgba(245, 158, 11, 0.1);
+                color: #fcd34d;
+                .icon { font-size: 14px; }
+            }
+        }
+    }
+
+    .blocker-title {
+        font-size: 4.8rem;
+        font-weight: 900;
+        color: #fff;
+        margin-bottom: 16px;
+        letter-spacing: -1px;
+    }
+
+    .blocker-text {
+        font-size: 1.6rem;
+        color: rgba(255, 255, 255, 0.6);
+        line-height: 1.6;
+        margin-bottom: 24px;
+        max-width: 480px;
+    }
+
+    .blocker-status {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: #f59e0b;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 48px;
+        animation: pulse 1.5s infinite;
+    }
+
+    .blocker-footer {
+        width: 100%;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        padding-top: 24px;
+
+        .footer-label {
+            font-size: 1.2rem;
+            color: rgba(239, 68, 68, 0.5);
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            font-weight: 800;
+        }
+
+        .social-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+
+            .social-item {
+                background: rgba(255, 255, 255, 0.03);
+                border: 1px solid rgba(255, 255, 255, 0.05);
+                padding: 12px;
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                color: #fff;
+                font-size: 1.4rem;
+                font-weight: 700;
+                text-decoration: none;
+                transition: all 0.2s;
+
+                &:hover {
+                    background: rgba(255, 255, 255, 0.08);
+                    border-color: rgba(255, 255, 255, 0.2);
+                    transform: translateY(-2px);
+                }
+
+                .icon { font-size: 1.8rem; }
+            }
+        }
+    }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}

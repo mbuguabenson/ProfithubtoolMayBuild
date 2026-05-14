@@ -1,0 +1,161 @@
+.profithub-tool-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    animation: fadeIn 0.3s ease-out;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+    &.scaled-down {
+        width: 80%;
+        height: 80%;
+        top: 10%;
+        left: 10%;
+        border-radius: 20px;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .profithub-tool-header {
+        height: 50px;
+        background: rgba(0, 5, 10, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+        .tool-title {
+            font-weight: 600;
+            color: #fff;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: linear-gradient(90deg, #ff4444, #ff8888);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .tool-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+
+            button {
+                background: rgba(255, 255, 255, 0.05);
+                border: none;
+                color: #fff;
+                width: 30px;
+                height: 30px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                font-size: 1.2rem;
+
+                &:hover {
+                    background: rgba(255, 255, 255, 0.15);
+                    transform: scale(1.1);
+                }
+
+                &.close-btn {
+                    color: #ff4444;
+
+                    &:hover {
+                        background: rgba(255, 68, 68, 0.2);
+                    }
+                }
+            }
+        }
+    }
+
+    .profithub-tool-iframe {
+        flex: 1;
+        border: none;
+        width: 100%;
+        height: 100%;
+        background: #000;
+    }
+}
+
+.bot-builder {
+    padding: 0 !important;
+    margin: 0 !important;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    #scratch_div {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+        border-radius: 0; // Seamless IDE look
+        width: 100%;
+        height: 100%;
+    }
+}
+
+.profithub-minimized-icon {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 5.6rem;
+    height: 5.6rem;
+    background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
+    border-radius: 50%;
+    box-shadow: 0 10px 25px rgba(255, 68, 68, 0.4);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+    &:hover {
+        transform: scale(1.1) rotate(10deg);
+        box-shadow: 0 15px 35px rgba(255, 68, 68, 0.6);
+    }
+
+    .tool-icon {
+        color: white;
+        font-weight: 900;
+        font-size: 2rem;
+        font-family: 'Georgia', serif; // Distinct serif P
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes popIn {
+    from {
+        opacity: 0;
+        transform: scale(0);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+

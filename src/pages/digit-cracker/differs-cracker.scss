@@ -1,0 +1,673 @@
+// ─────────────────────────────────────────────
+// Differs Cracker Styles
+// ─────────────────────────────────────────────
+
+.dc-cracker {
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+    padding: 1.6rem;
+    color: #fff;
+
+    &__header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+
+        h2 {
+            font-size: 1.4rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #a78bfa, #38bdf8);
+            background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    }
+
+    &__subtitle {
+        font-size: 0.75rem;
+        color: #64748b;
+        margin-top: 0.2rem;
+    }
+
+    .dc-market-select {
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+
+        label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        select {
+            background: rgb(0 0 0 / 40%);
+            border: 1px solid rgb(255 255 255 / 15%);
+            border-radius: 10px;
+            color: #fff;
+            padding: 0.55rem 1.1rem;
+            font-size: 0.85rem;
+            outline: none;
+            cursor: pointer;
+        }
+    }
+}
+
+// ── Section banner ────────────────────────────────────────────────
+.dc-banner {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.4rem;
+    border-radius: 14px;
+    border: 1.5px solid;
+    flex-wrap: wrap;
+    transition: all 0.4s ease;
+
+    &.active {
+        background: rgb(167 139 250 / 8%);
+        border-color: rgb(167 139 250 / 40%);
+        box-shadow: 0 0 20px rgb(167 139 250 / 15%);
+    }
+
+    &.none {
+        background: rgb(100 116 139 / 8%);
+        border-color: rgb(100 116 139 / 20%);
+    }
+
+    &__label {
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #94a3b8;
+    }
+
+    &__digit {
+        font-size: 2.5rem;
+        font-weight: 900;
+        font-family: 'JetBrains Mono', monospace;
+        color: #a78bfa;
+        text-shadow: 0 0 20px #a78bfa;
+        min-width: 40px;
+        text-align: center;
+    }
+
+    &__detail {
+        font-size: 0.75rem;
+        color: #64748b;
+        line-height: 1.5;
+    }
+
+    &__none {
+        font-size: 0.8rem;
+        color: #64748b;
+    }
+}
+
+// ── Glass panel ───────────────────────────────────────────────────
+.glass-panel {
+    background: rgb(255 255 255 / 3%);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgb(255 255 255 / 10%);
+    border-radius: 16px;
+}
+
+.dc-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    padding: 1.2rem 1.4rem;
+
+    &__title {
+        font-size: 0.75rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #94a3b8;
+    }
+
+    &__legend {
+        font-weight: 500;
+        text-transform: none;
+        letter-spacing: 0;
+        font-size: 0.68rem;
+        color: #475569;
+    }
+}
+
+// ── Pattern dots ──────────────────────────────────────────────────
+.dc-pattern-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.dc-dot {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 900;
+
+    &.pred {
+        background: rgb(167 139 250 / 20%);
+        border: 1.5px solid #a78bfa;
+        color: #a78bfa;
+        box-shadow: 0 0 10px rgb(167 139 250 / 40%);
+        animation: dc-pred-pulse 2s infinite;
+    }
+
+    &.excl {
+        background: rgb(244 63 94 / 10%);
+        border: 1.5px solid rgb(244 63 94 / 40%);
+        color: #f43f5e;
+    }
+
+    &.normal {
+        background: rgb(255 255 255 / 5%);
+        border: 1px solid rgb(255 255 255 / 10%);
+        color: #94a3b8;
+    }
+}
+
+.dc-pattern-legend {
+    font-size: 0.72rem;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+
+    .dc-dot {
+        width: 1.4rem;
+        height: 1.4rem;
+        font-size: 0.6rem;
+    }
+}
+
+// ── Exclusion chips ───────────────────────────────────────────────
+.dc-excl-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+}
+
+.dc-excl-chip {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 0.6rem 0.9rem;
+    border-radius: 10px;
+    font-size: 0.67rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    min-width: 80px;
+
+    &.edge {
+        background: rgb(244 63 94 / 8%);
+        border: 1px solid rgb(244 63 94 / 25%);
+        color: #f43f5e;
+    }
+
+    &.rank {
+        background: rgb(245 158 11 / 8%);
+        border: 1px solid rgb(245 158 11 / 25%);
+        color: #f59e0b;
+    }
+
+    &.incr {
+        background: rgb(251 146 60 / 8%);
+        border: 1px solid rgb(251 146 60 / 25%);
+        color: #fb923c;
+    }
+
+    .dc-excl-digits {
+        display: flex;
+        gap: 0.4rem;
+
+        span {
+            background: rgb(0 0 0 / 30%);
+            border-radius: 6px;
+            padding: 0.1rem 0.5rem;
+            font-size: 0.85rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+    }
+}
+
+// ── Digit table ───────────────────────────────────────────────────
+.dc-table-header {
+    display: grid;
+    grid-template-columns: 40px 1fr 55px 55px 90px 1fr;
+    gap: 0.5rem;
+    padding: 0 0.3rem;
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+.dc-digit-row {
+    display: grid;
+    grid-template-columns: 40px 1fr 55px 55px 90px 1fr;
+    gap: 0.5rem;
+    align-items: center;
+    padding: 0.6rem 0.7rem;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+        border-color: rgb(167 139 250 / 20%);
+        background: rgb(167 139 250 / 5%);
+    }
+
+    &__num {
+        font-size: 1.1rem;
+        font-weight: 900;
+        font-family: 'JetBrains Mono', monospace;
+        color: #94a3b8;
+    }
+
+    &__bar-wrap {
+        height: 6px;
+        background: rgb(255 255 255 / 5%);
+        border-radius: 100px;
+        overflow: hidden;
+    }
+
+    &__bar {
+        height: 100%;
+        background: #475569;
+        border-radius: 100px;
+        transition: width 0.4s ease;
+    }
+
+    &__pct {
+        font-size: 0.78rem;
+        color: #64748b;
+        text-align: right;
+    }
+
+    &__l25 {
+        font-size: 0.78rem;
+        color: #475569;
+        text-align: right;
+    }
+
+    &__flags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+    }
+
+    // States
+    &--best {
+        background: rgb(167 139 250 / 10%);
+        border-color: rgb(167 139 250 / 35%);
+        box-shadow: 0 0 12px rgb(167 139 250 / 15%);
+
+        .dc-digit-row__num {
+            color: #a78bfa;
+        }
+
+        .dc-digit-row__bar {
+            background: #a78bfa;
+        }
+
+        .dc-digit-row__pct {
+            color: #c4b5fd;
+        }
+    }
+
+    &--candidate {
+        background: rgb(56 189 248 / 5%);
+        border-color: rgb(56 189 248 / 20%);
+
+        .dc-digit-row__num {
+            color: #38bdf8;
+        }
+
+        .dc-digit-row__bar {
+            background: #38bdf8;
+        }
+    }
+
+    &--excluded {
+        opacity: 0.45;
+        cursor: not-allowed;
+    }
+
+    &--edge {
+        opacity: 0.3;
+        cursor: not-allowed;
+    }
+
+    &--selected {
+        background: rgb(167 139 250 / 15%);
+        border-color: #a78bfa;
+    }
+}
+
+.dc-table-hint {
+    font-size: 0.68rem;
+    color: #334155;
+    margin-top: 0.2rem;
+}
+
+// ── Trend arrows ──────────────────────────────────────────────────
+.dc-trend {
+    font-size: 0.75rem;
+    font-weight: 800;
+
+    &.up {
+        color: #f43f5e;
+    }
+
+    &.down {
+        color: #10b981;
+    }
+
+    &.neutral {
+        color: #475569;
+    }
+}
+
+// ── Flags ─────────────────────────────────────────────────────────
+.dc-flag {
+    font-size: 0.6rem;
+    font-weight: 800;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+
+    &.l7 {
+        background: rgb(245 158 11 / 15%);
+        color: #f59e0b;
+    }
+
+    &.l25 {
+        background: rgb(251 146 60 / 10%);
+        color: #fb923c;
+    }
+
+    &.best {
+        background: rgb(167 139 250 / 20%);
+        color: #a78bfa;
+    }
+
+    &.excl {
+        background: rgb(244 63 94 / 10%);
+        color: #f43f5e;
+    }
+
+    &.edge {
+        background: rgb(244 63 94 / 10%);
+        color: #f43f5e;
+    }
+}
+
+// ── Prediction selector ───────────────────────────────────────────
+.dc-pred-row {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+}
+
+.dc-mode-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: 1px solid rgb(255 255 255 / 10%);
+    background: rgb(255 255 255 / 3%);
+    color: #64748b;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &.active {
+        background: rgb(167 139 250 / 15%);
+        border-color: rgb(167 139 250 / 40%);
+        color: #a78bfa;
+    }
+
+    &:hover {
+        color: #fff;
+    }
+}
+
+.dc-select {
+    background: rgb(0 0 0 / 40%);
+    border: 1px solid rgb(255 255 255 / 15%);
+    border-radius: 8px;
+    color: #fff;
+    padding: 0.45rem 0.8rem;
+    font-size: 0.82rem;
+    outline: none;
+    cursor: pointer;
+}
+
+.dc-active-pred {
+    font-size: 0.8rem;
+    color: #94a3b8;
+
+    &__val {
+        font-weight: 900;
+        font-size: 1.2rem;
+        font-family: 'JetBrains Mono', monospace;
+        color: #475569;
+
+        &.set {
+            color: #a78bfa;
+            text-shadow: 0 0 10px rgb(167 139 250 / 50%);
+        }
+    }
+}
+
+// ── Entry stages ──────────────────────────────────────────────────
+.dc-stages {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.dc-stage {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.5rem 0.7rem;
+    border-radius: 8px;
+    border: 1px solid rgb(255 255 255 / 5%);
+    font-size: 0.78rem;
+    color: #475569;
+    transition: all 0.3s ease;
+
+    &__icon {
+        font-size: 0.9rem;
+    }
+
+    &.done {
+        background: rgb(16 185 129 / 5%);
+        border-color: rgb(16 185 129 / 20%);
+        color: #10b981;
+    }
+
+    &.current {
+        background: rgb(245 158 11 / 8%);
+        border-color: rgb(245 158 11 / 30%);
+        color: #f59e0b;
+        animation: dc-stage-pulse 2s infinite;
+    }
+}
+
+.dc-entry-signal {
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    background: rgb(100 116 139 / 8%);
+    border: 1px solid rgb(100 116 139 / 20%);
+    color: #64748b;
+    line-height: 1.4;
+    transition: all 0.4s ease;
+
+    &.triggered {
+        background: rgb(167 139 250 / 10%);
+        border-color: rgb(167 139 250 / 40%);
+        color: #a78bfa;
+        box-shadow: 0 0 20px rgb(167 139 250 / 15%);
+        animation: dc-pred-pulse 2s infinite;
+    }
+}
+
+// ── Execution ─────────────────────────────────────────────────────
+.dc-exec-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+
+    @media (width <= 500px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.dc-exec-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+
+    label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+    }
+}
+
+.dc-input {
+    background: rgb(0 0 0 / 40%);
+    border: 1px solid rgb(255 255 255 / 15%);
+    border-radius: 8px;
+    color: #fff;
+    padding: 0.5rem 0.8rem;
+    font-size: 0.85rem;
+    width: 100%;
+    outline: none;
+
+    &:focus {
+        border-color: #a78bfa;
+    }
+}
+
+.dc-trade-signal {
+    font-size: 0.88rem;
+    font-weight: 800;
+    padding: 0.9rem;
+    border-radius: 12px;
+    background: rgb(100 116 139 / 8%);
+    border: 1px solid rgb(100 116 139 / 20%);
+    color: #64748b;
+    text-align: center;
+    transition: all 0.3s ease;
+
+    &.active {
+        background: rgb(167 139 250 / 10%);
+        border-color: rgb(167 139 250 / 40%);
+        color: #a78bfa;
+        animation: dc-pred-pulse 2s infinite;
+    }
+}
+
+.dc-exec-btns {
+    display: flex;
+    gap: 0.8rem;
+}
+
+.dc-btn-primary {
+    flex: 1;
+    padding: 0.9rem;
+    border-radius: 12px;
+    border: none;
+    font-weight: 900;
+    font-size: 0.9rem;
+    cursor: pointer;
+    background: linear-gradient(135deg, #7c3aed, #a78bfa);
+    color: #fff;
+    box-shadow: 0 6px 20px rgb(124 58 237 / 30%);
+    transition: all 0.3s ease;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgb(124 58 237 / 50%);
+    }
+
+    &.active {
+        background: linear-gradient(135deg, #f43f5e, #fb923c);
+        box-shadow: 0 6px 20px rgb(244 63 94 / 30%);
+    }
+}
+
+.dc-btn-secondary {
+    flex: 1;
+    padding: 0.9rem;
+    border-radius: 12px;
+    border: 1px solid rgb(255 255 255 / 15%);
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    background: rgb(255 255 255 / 5%);
+    color: #fff;
+    transition: all 0.3s ease;
+
+    &:hover {
+        background: rgb(255 255 255 / 10%);
+    }
+
+    &:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+}
+
+// ── Animations ────────────────────────────────────────────────────
+@keyframes dc-pred-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgb(167 139 250 / 40%);
+    }
+
+    70% {
+        box-shadow: 0 0 0 8px rgb(167 139 250 / 0%);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgb(167 139 250 / 0%);
+    }
+}
+
+@keyframes dc-stage-pulse {
+    0% {
+        border-color: rgb(245 158 11 / 30%);
+    }
+
+    50% {
+        border-color: rgb(245 158 11 / 70%);
+    }
+
+    100% {
+        border-color: rgb(245 158 11 / 30%);
+    }
+}
+

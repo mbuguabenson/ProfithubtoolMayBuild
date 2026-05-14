@@ -1,0 +1,39 @@
+.market-selector {
+    &__select {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #fff;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        outline: none;
+        transition: all 0.2s ease;
+        min-width: 180px;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        &:focus {
+            border-color: #00c6ff;
+            box-shadow: 0 0 0 2px rgba(0, 198, 255, 0.2);
+        }
+
+        optgroup {
+            background: #1a1a1a;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 700;
+            padding: 8px;
+        }
+
+        option {
+            background: #1a1a1a;
+            color: #fff;
+            padding: 8px;
+        }
+    }
+}
+

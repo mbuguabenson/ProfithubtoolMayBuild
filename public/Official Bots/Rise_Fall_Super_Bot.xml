@@ -1,0 +1,300 @@
+<xml xmlns="https://developers.google.com/blockly/xml" is_dbot="true" collection="false">
+  <variables>
+    <variable id="stake">Stake</variable>
+    <variable id="current_stake">Current Stake</variable>
+    <variable id="multiplier">Multiplier</variable>
+    <variable id="target_profit">Target Profit</variable>
+    <variable id="stop_loss">Stop Loss</variable>
+    <variable id="total_profit">Total Profit</variable>
+    <variable id="close2">Close 2</variable>
+    <variable id="open2">Open 2</variable>
+    <variable id="close3">Close 3</variable>
+    <variable id="open3">Open 3</variable>
+    <variable id="trend">Trend</variable>
+    <variable id="color2">Color 2</variable>
+    <variable id="pattern">Pattern</variable>
+    <variable id="signal">Signal</variable>
+  </variables>
+
+  <!-- Setup & Variables Initialization -->
+  <block type="trade_definition" id="trade_def" deletable="false" x="0" y="0">
+    <statement name="TRADE_OPTIONS">
+      <block type="trade_definition_market" id="market">
+        <field name="MARKET_LIST">synthetic_index</field>
+        <field name="SUBMARKET_LIST">random_index</field>
+        <field name="SYMBOL_LIST">1HZ100V</field>
+        <next>
+          <block type="trade_definition_tradetype" id="trade_type">
+            <field name="TRADETYPECAT_LIST">callput</field>
+            <field name="TRADETYPE_LIST">callput</field>
+            <next>
+              <block type="trade_definition_contracttype" id="contract_type">
+                <field name="TYPE_LIST">both</field>
+                <next>
+                  <block type="trade_definition_candleinterval" id="interval">
+                    <field name="CANDLEINTERVAL_LIST">60</field>
+                    <next>
+                      <block type="trade_definition_restartbuysell" id="restart">
+                        <field name="TIME_MACHINE_ENABLED">FALSE</field>
+                        <next>
+                          <block type="trade_definition_restartonerror" id="onerror">
+                            <field name="RESTARTONERROR">TRUE</field>
+                          </block>
+                        </next>
+                      </block>
+                    </next>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </statement>
+    <statement name="INITIALIZATION">
+      <block type="variables_set">
+        <field name="VAR" id="stake">Stake</field>
+        <value name="VALUE"><block type="math_number"><field name="NUM">0.35</field></block></value>
+        <next>
+          <block type="variables_set">
+            <field name="VAR" id="current_stake">Current Stake</field>
+            <value name="VALUE"><block type="variables_get"><field name="VAR" id="stake">Stake</field></block></value>
+            <next>
+              <block type="variables_set">
+                <field name="VAR" id="multiplier">Multiplier</field>
+                <value name="VALUE"><block type="math_number"><field name="NUM">2.1</field></block></value>
+                <next>
+                  <block type="variables_set">
+                    <field name="VAR" id="total_profit">Total Profit</field>
+                    <value name="VALUE"><block type="math_number"><field name="NUM">0</field></block></value>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </statement>
+    <statement name="SUBMARKET">
+      <block type="trade_definition_tradeoptions" id="options">
+        <mutation has_first_barrier="false" has_second_barrier="false" has_prediction="false"></mutation>
+        <field name="DURATIONTYPE_LIST">t</field>
+        <value name="DURATION"><block type="math_number"><field name="NUM">3</field></block></value>
+        <value name="AMOUNT"><block type="variables_get"><field name="VAR" id="current_stake">Current Stake</field></block></value>
+      </block>
+    </statement>
+  </block>
+
+  <!-- ANALYSIS & PURCHASE LOGIC -->
+  <block type="before_purchase" id="before" x="0" y="800">
+    <statement name="BEFOREPURCHASE_STACK">
+      <block type="notify">
+        <field name="NOTIFICATION_TYPE">info</field>
+        <field name="NOTIFICATION_SOUND">silent</field>
+        <value name="MESSAGE"><block type="text"><field name="TEXT">Profithub pro engine: analyzing</field></block></value>
+        <next>
+
+        <!-- Fetch Candle 2 (Last Closed) -->
+        <block type="variables_set">
+          <field name="VAR" id="close2">Close 2</field>
+          <value name="VALUE">
+            <block type="read_ohlc"><field name="OHLCFIELD_LIST">close</field><value name="CANDLEINDEX"><block type="math_number"><field name="NUM">2</field></block></value></block>
+          </value>
+          <next>
+          <block type="variables_set">
+            <field name="VAR" id="open2">Open 2</field>
+            <value name="VALUE">
+              <block type="read_ohlc"><field name="OHLCFIELD_LIST">open</field><value name="CANDLEINDEX"><block type="math_number"><field name="NUM">2</field></block></value></block>
+            </value>
+            <next>
+
+            <!-- Fetch Candle 3 (2nd Last Closed) -->
+            <block type="variables_set">
+              <field name="VAR" id="close3">Close 3</field>
+              <value name="VALUE">
+                <block type="read_ohlc"><field name="OHLCFIELD_LIST">close</field><value name="CANDLEINDEX"><block type="math_number"><field name="NUM">3</field></block></value></block>
+              </value>
+              <next>
+              <block type="variables_set">
+                <field name="VAR" id="open3">Open 3</field>
+                <value name="VALUE">
+                  <block type="read_ohlc"><field name="OHLCFIELD_LIST">open</field><value name="CANDLEINDEX"><block type="math_number"><field name="NUM">3</field></block></value></block>
+                </value>
+                <next>
+
+                <!-- Determine Trend (2 candles ago) -->
+                <!-- Simple: if close3 > open3 it's UP trend forming, else DOWN -->
+                <block type="controls_if">
+                  <mutation else="1"></mutation>
+                  <value name="IF0"><block type="logic_compare"><field name="OP">GT</field><value name="A"><block type="variables_get"><field name="VAR" id="close3">Close 3</field></block></value><value name="B"><block type="variables_get"><field name="VAR" id="open3">Open 3</field></block></value></block></value>
+                  <statement name="DO0"><block type="variables_set"><field name="VAR" id="trend">Trend</field><value name="VALUE"><block type="text"><field name="TEXT">UP</field></block></value></block></statement>
+                  <statement name="ELSE"><block type="variables_set"><field name="VAR" id="trend">Trend</field><value name="VALUE"><block type="text"><field name="TEXT">DOWN</field></block></value></block></statement>
+                  <next>
+
+                  <!-- Determine Color 2 -->
+                  <block type="controls_if">
+                    <mutation else="1"></mutation>
+                    <value name="IF0"><block type="logic_compare"><field name="OP">GT</field><value name="A"><block type="variables_get"><field name="VAR" id="close2">Close 2</field></block></value><value name="B"><block type="variables_get"><field name="VAR" id="open2">Open 2</field></block></value></block></value>
+                    <statement name="DO0"><block type="variables_set"><field name="VAR" id="color2">Color 2</field><value name="VALUE"><block type="text"><field name="TEXT">GREEN</field></block></value></block></statement>
+                    <statement name="ELSE"><block type="variables_set"><field name="VAR" id="color2">Color 2</field><value name="VALUE"><block type="text"><field name="TEXT">RED</field></block></value></block></statement>
+                    <next>
+
+                    <!-- Determine Pattern & Signal -->
+                    <block type="variables_set">
+                      <field name="VAR" id="signal">Signal</field>
+                      <value name="VALUE"><block type="text"><field name="TEXT">NONE</field></block></value>
+                      <next>
+                        <block type="controls_if">
+                          <mutation elseif="1"></mutation>
+                          <!-- Continuation: Trend UP & Candle2 is GREEN -->
+                          <value name="IF0">
+                            <block type="logic_operation" inline="false">
+                              <field name="OP">AND</field>
+                              <value name="A"><block type="logic_compare"><field name="OP">EQ</field><value name="A"><block type="variables_get"><field name="VAR" id="trend">Trend</field></block></value><value name="B"><block type="text"><field name="TEXT">UP</field></block></value></block></value>
+                              <value name="B"><block type="logic_compare"><field name="OP">EQ</field><value name="A"><block type="variables_get"><field name="VAR" id="color2">Color 2</field></block></value><value name="B"><block type="text"><field name="TEXT">GREEN</field></block></value></block></value>
+                            </block>
+                          </value>
+                          <statement name="DO0">
+                            <block type="variables_set"><field name="VAR" id="pattern">Pattern</field><value name="VALUE"><block type="text"><field name="TEXT">Bullish Continuation</field></block></value>
+                            <next><block type="variables_set"><field name="VAR" id="signal">Signal</field><value name="VALUE"><block type="text"><field name="TEXT">CALL</field></block></value></block></next></block>
+                          </statement>
+
+                          <!-- Continuation: Trend DOWN & Candle2 is RED -->
+                          <value name="IF1">
+                            <block type="logic_operation" inline="false">
+                              <field name="OP">AND</field>
+                              <value name="A"><block type="logic_compare"><field name="OP">EQ</field><value name="A"><block type="variables_get"><field name="VAR" id="trend">Trend</field></block></value><value name="B"><block type="text"><field name="TEXT">DOWN</field></block></value></block></value>
+                              <value name="B"><block type="logic_compare"><field name="OP">EQ</field><value name="A"><block type="variables_get"><field name="VAR" id="color2">Color 2</field></block></value><value name="B"><block type="text"><field name="TEXT">RED</field></block></value></block></value>
+                            </block>
+                          </value>
+                          <statement name="DO1">
+                            <block type="variables_set"><field name="VAR" id="pattern">Pattern</field><value name="VALUE"><block type="text"><field name="TEXT">Bearish Continuation</field></block></value>
+                            <next><block type="variables_set"><field name="VAR" id="signal">Signal</field><value name="VALUE"><block type="text"><field name="TEXT">PUT</field></block></value></block></next></block>
+                          </statement>
+                          <next>
+
+                          <!-- Advanced Logging -->
+                          <block type="notify">
+                            <field name="NOTIFICATION_TYPE">info</field>
+                            <field name="NOTIFICATION_SOUND">silent</field>
+                            <value name="MESSAGE">
+                              <block type="text_join">
+                                <mutation items="6"></mutation>
+                                <value name="ADD0"><block type="text"><field name="TEXT">Trend: </field></block></value>
+                                <value name="ADD1"><block type="variables_get"><field name="VAR" id="trend">Trend</field></block></value>
+                                <value name="ADD2"><block type="text"><field name="TEXT"> | Last Color: </field></block></value>
+                                <value name="ADD3"><block type="variables_get"><field name="VAR" id="color2">Color 2</field></block></value>
+                                <value name="ADD4"><block type="text"><field name="TEXT"> | Pattern: </field></block></value>
+                                <value name="ADD5"><block type="variables_get"><field name="VAR" id="pattern">Pattern</field></block></value>
+                              </block>
+                            </value>
+                            <next>
+
+                            <!-- Trade Execution Context -->
+                            <block type="controls_if">
+                              <mutation elseif="1"></mutation>
+                              <value name="IF0">
+                                <block type="logic_compare"><field name="OP">EQ</field><value name="A"><block type="variables_get"><field name="VAR" id="signal">Signal</field></block></value><value name="B"><block type="text"><field name="TEXT">CALL</field></block></value></block>
+                              </value>
+                              <statement name="DO0">
+                                <block type="notify">
+                                  <field name="NOTIFICATION_TYPE">success</field>
+                                  <field name="NOTIFICATION_SOUND">silent</field>
+                                  <value name="MESSAGE"><block type="text"><field name="TEXT">Profithub found signal, executing CALL</field></block></value>
+                                  <next><block type="purchase"><field name="PURCHASE_LIST">CALL</field><field name="ALLOW_BULK_PURCHASE">no</field><field name="NUM_TRADES">1</field></block></next>
+                                </block>
+                              </statement>
+                              <value name="IF1">
+                                <block type="logic_compare"><field name="OP">EQ</field><value name="A"><block type="variables_get"><field name="VAR" id="signal">Signal</field></block></value><value name="B"><block type="text"><field name="TEXT">PUT</field></block></value></block>
+                              </value>
+                              <statement name="DO1">
+                                <block type="notify">
+                                  <field name="NOTIFICATION_TYPE">success</field>
+                                  <field name="NOTIFICATION_SOUND">silent</field>
+                                  <value name="MESSAGE"><block type="text"><field name="TEXT">Profithub found signal, executing PUT</field></block></value>
+                                  <next><block type="purchase"><field name="PURCHASE_LIST">PUT</field><field name="ALLOW_BULK_PURCHASE">no</field><field name="NUM_TRADES">1</field></block></next>
+                                </block>
+                              </statement>
+                            </block>
+
+                            </next>
+                          </block>
+
+                          </next>
+                        </block>
+                      </next>
+                    </block>
+
+                    </next>
+                  </block>
+
+                  </next>
+                </block>
+
+                </next>
+              </block>
+              </next>
+            </block>
+
+            </next>
+          </block>
+          </next>
+        </block>
+
+        </next>
+      </block>
+    </statement>
+  </block>
+
+  <!-- AFTER PURCHASE -->
+  <block type="after_purchase" id="after" x="0" y="2000">
+    <statement name="AFTERPURCHASE_STACK">
+      <block type="controls_if">
+        <mutation else="1"></mutation>
+        <value name="IF0"><block type="contract_check_result"><field name="CHECK_RESULT">win</field></block></value>
+        <statement name="DO0">
+          <block type="notify">
+            <field name="NOTIFICATION_TYPE">success</field>
+            <field name="NOTIFICATION_SOUND">silent</field>
+            <value name="MESSAGE">
+              <block type="lists_getIndex">
+                <mutation statement="false" at="false"></mutation>
+                <field name="MODE">GET</field>
+                <field name="WHERE">RANDOM</field>
+                <value name="VALUE">
+                  <block type="lists_create_with">
+                    <mutation items="3"></mutation>
+                    <value name="ADD0"><block type="text"><field name="TEXT">Dollars Printed Successfully</field></block></value>
+                    <value name="ADD1"><block type="text"><field name="TEXT">Congratulations Banked Kudos!</field></block></value>
+                    <value name="ADD2"><block type="text"><field name="TEXT">Greens Printed Successfully</field></block></value>
+                  </block>
+                </value>
+              </block>
+            </value>
+            <next><block type="variables_set"><field name="VAR" id="current_stake">Current Stake</field><value name="VALUE"><block type="variables_get"><field name="VAR" id="stake">Stake</field></block></value></block></next>
+          </block>
+        </statement>
+        <statement name="ELSE">
+          <block type="notify">
+            <field name="NOTIFICATION_TYPE">error</field>
+            <field name="NOTIFICATION_SOUND">silent</field>
+            <value name="MESSAGE"><block type="text"><field name="TEXT">Sorry lets try again</field></block></value>
+            <next>
+              <block type="variables_set">
+                <field name="VAR" id="current_stake">Current Stake</field>
+                <value name="VALUE">
+                  <block type="math_arithmetic">
+                    <field name="OP">MULTIPLY</field>
+                    <value name="A"><block type="variables_get"><field name="VAR" id="current_stake">Current Stake</field></block></value>
+                    <value name="B"><block type="variables_get"><field name="VAR" id="multiplier">Multiplier</field></block></value>
+                  </block>
+                </value>
+              </block>
+            </next>
+          </block>
+        </statement>
+        <next><block type="trade_again"></block></next>
+      </block>
+    </statement>
+  </block>
+</xml>

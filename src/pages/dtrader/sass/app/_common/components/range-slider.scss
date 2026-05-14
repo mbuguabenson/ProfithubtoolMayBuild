@@ -1,0 +1,174 @@
+// Range Slider
+/** @define range-slider */
+.range-slider {
+    margin-top: 12px;
+    margin-bottom: 12px;
+    padding: 0 8px;
+    box-sizing: border-box;
+
+    &__label {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 16px;
+        margin-bottom: 8px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+    
+    /* overriding firefox shadow pseudo element */
+    &__track[type='range']::-moz-focus-outer {
+        border: 0;
+    }
+
+    // TODO: remove once we have proper styling for input slider validation error
+    &__error {
+        .range-slider {
+            &__track[type='range'] {
+                &::-webkit-slider-thumb {
+                    border-color: var(--text-loss-danger) !important;
+                }
+                &::-moz-range-thumb {
+                    border-color: var(--text-loss-danger) !important;
+                }
+            }
+            &__line {
+                background: var(--text-loss-danger) !important;
+                box-shadow: 0 0 10px rgba(var(--text-loss-danger), 0.4) !important;
+            }
+            &__ticks-step--marked {
+                background: var(--text-loss-danger) !important;
+            }
+        }
+    }
+
+    // Modern Track
+    &__track[type='range'] {
+        position: relative;
+        appearance: none !important;
+        width: 100% !important;
+        height: 6px;
+        border-radius: 10px;
+        outline: none;
+        padding: 0;
+        margin: 0;
+        cursor: pointer;
+        background: rgba(148, 163, 184, 0.25); // Modern subtle track color
+        border: none;
+        transition: background 0.3s ease;
+
+        // Range Handle Thumb - Chrome / Webkit
+        &::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 2px solid var(--state-active);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            margin-top: -7px; // align thumb vertically
+            
+            &:hover {
+                transform: scale(1.2);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            }
+        }
+        
+        // Range Handle Thumb - Firefox
+        &::-moz-range-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 2px solid var(--state-active);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            
+            &:hover {
+                transform: scale(1.2);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            }
+        }
+
+        &:active {
+            &::-webkit-slider-thumb {
+                transform: scale(0.9);
+                background: var(--state-active);
+            }
+            &::-moz-range-thumb {
+                transform: scale(0.9);
+                background: var(--state-active);
+            }
+        }
+    }
+
+    // Modern Line (Filled part of track)
+    &__line {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 6px;
+        border-radius: 10px;
+        pointer-events: none;
+        background: var(--state-active);
+        box-shadow: 0 0 8px rgba(var(--state-active), 0.5);
+        transition: width 0.1s linear;
+
+        &--fill {
+            background: var(--state-hover);
+        }
+    }
+
+    // Modern Ticks
+    &__ticks {
+        width: 100%;
+        position: absolute;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        left: 0;
+        top: 0px; 
+        height: 6px; // Match track height to perfectly center
+
+        &-step {
+            height: 6px;
+            width: 6px;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            background: rgba(148, 163, 184, 0.4);
+            border: none;
+
+            &--active,
+            &--marked {
+                background: #ffffff;
+                box-shadow: 0 0 4px var(--state-active);
+            }
+            &--marked-hover {
+                background: var(--state-hover);
+                transform: scale(1.3);
+            }
+            &--active {
+                visibility: hidden;
+                pointer-events: none;
+            }
+            &:hover:not(&--active) {
+                transform: scale(1.5);
+                background: var(--state-active);
+            }
+        }
+    }
+
+    &__caption {
+        text-align: center;
+        padding-top: 14px;
+        font-size: 0.85rem;
+        opacity: 0.7;
+        font-weight: 500;
+    }
+}

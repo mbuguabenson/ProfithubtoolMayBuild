@@ -1,0 +1,32 @@
+@use 'components/shared/styles/themes' as *;
+@import 'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap';
+
+:root {
+    --font-display: 'IBM Plex Sans', sans-serif;
+    --font-body: 'IBM Plex Sans', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-body);
+    background: var(--general-main-1);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-general-fill-path {
+    path {
+        fill: var(--text-general);
+    }
+}
+
+.icon-general-fill-g-path {
+    g {
+        path {
+            fill: var(--text-general);
+        }
+    }
+}
+

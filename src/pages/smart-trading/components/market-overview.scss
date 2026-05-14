@@ -1,0 +1,96 @@
+.smart-market-overview {
+    .market-overview__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--general-section-2);
+        padding: 1.5rem 2rem;
+        border-radius: 12px;
+        border: 1px solid var(--border-normal);
+        gap: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .market-overview__selector {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        flex: 1;
+        min-width: 250px;
+
+        label {
+            font-size: 0.8rem;
+            color: var(--text-general);
+            font-weight: 500;
+        }
+
+        select {
+            background: var(--general-section-1);
+            border: 1px solid var(--border-normal);
+            padding: 0.8rem;
+            border-radius: 8px;
+            color: var(--text-prominent);
+            font-size: 1rem;
+            outline: none;
+
+            &:focus {
+                border-color: var(--brand-red-coral);
+            }
+        }
+    }
+
+    .market-overview__price-card,
+    .market-overview__digit-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0 1.5rem;
+        border-left: 1px solid var(--border-normal);
+
+        .label {
+            font-size: 0.75rem;
+            color: var(--text-general);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .price {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-prominent);
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        .digit {
+            font-size: 2rem;
+            font-weight: 900;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            background: var(--general-section-1);
+
+            &--0,
+            &--2,
+            &--4,
+            &--6,
+            &--8 {
+                color: #0fc;
+                text-shadow: 0 0 10px rgb(0 255 204 / 50%);
+            }
+
+            &--1,
+            &--3,
+            &--5,
+            &--7,
+            &--9 {
+                color: #f44;
+                text-shadow: 0 0 10px rgb(255 68 68 / 50%);
+            }
+        }
+    }
+}
+

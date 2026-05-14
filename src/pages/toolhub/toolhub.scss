@@ -1,0 +1,138 @@
+.toolhub-container {
+    padding: 0; // Remove padding to use full width
+    display: flex;
+    flex-direction: column;
+    gap: 0; // Remove gap
+    height: 100%; // Fill parent height
+    min-height: calc(100vh - 80px); // Adjust based on header height
+    background: #0b0e14; // solid background
+
+    .glass-card {
+        background: rgb(23 28 41 / 95%); // More opaque
+        backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgb(255 255 255 / 5%);
+        border-radius: 0; // Remove border radius for full fit
+    }
+
+    .toolhub-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 1.5rem; // Reduced padding
+        z-index: 10;
+        height: 60px; // Fixed header height
+
+        .toolhub-nav {
+            display: flex;
+            gap: 1rem;
+
+            .tool-btn {
+                background: transparent;
+                border: 1px solid rgb(255 255 255 / 10%);
+                color: rgb(255 255 255 / 60%);
+                padding: 0.5rem 1rem; // Compact buttons
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                font-weight: 500;
+                font-family: var(--font-display);
+                font-size: 0.9rem;
+
+                .btn-icon {
+                    width: 16px;
+                    height: 16px;
+                }
+
+                &:hover {
+                    background: rgb(255 255 255 / 5%);
+                    color: #ffffff;
+                }
+
+                &.active {
+                    background: #f44; // Solid color for better visibility
+                    border-color: #f44;
+                    color: #ffffff;
+                    box-shadow: 0 4px 12px rgb(255 68 68 / 30%);
+                }
+            }
+        }
+
+        .toolhub-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: #10b981;
+            font-weight: 500;
+
+            .status-dot {
+                width: 6px;
+                height: 6px;
+                background: #10b981;
+                border-radius: 50%;
+                box-shadow: 0 0 8px #10b981;
+                animation: pulse 2s infinite;
+            }
+        }
+    }
+
+    .toolview-wrapper {
+        flex: 1;
+        overflow: hidden;
+        position: relative;
+        padding: 0;
+        border-top: 1px solid rgb(255 255 255 / 5%);
+        background: #fff; // Iframe background
+
+        .tool-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block; // Remove inline-block spacing
+        }
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.5);
+        opacity: 0.5;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@media (width <=768px) {
+    .toolhub-container {
+        padding: 1rem;
+
+        .toolhub-header {
+            flex-direction: column;
+            gap: 1.5rem;
+            padding: 1.5rem;
+
+            .toolhub-nav {
+                width: 100%;
+                flex-direction: column;
+
+                .tool-btn {
+                    width: 100%;
+                    justify-content: center;
+                }
+            }
+        }
+    }
+}
+

@@ -1,0 +1,79 @@
+﻿
+> bot-trader-app-v2@0.0.1 build
+> rsbuild build
+
+Rsbuild v1.6.14
+
+info    build started...
+node.exe : error   [1m[31mBuild errors: [39m[22m
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (error   [1m[3...ors: [39m[22m:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+File: [36m.\src\pages\dashboard\dashboard.scss:1:1[39m
+  ├ù Module build failed (from ./node_modules/@rsbuild/plugin-sass/compiled/sass-loader/index.js):
+  Γò░ΓöÇΓû╢   ├ù 2 arguments required, but only 1 was passed.
+        Γöé     Γò╖
+        Γöé 106 Γöé             width: rem(300px); // Reduced size
+        Γöé     Γöé                    ^^^^^^^^^^
+        Γöé     Γò╡
+        Γöé   C:\Users\Castel Technologies\Videos\march\src\pages\dashboard\dashboard.scss 106:20  root stylesheet
+
+File: [36m.\src\pages\digit-cracker\digit-cracker.scss:1:1[39m
+  ├ù Module build failed (from ./node_modules/@rsbuild/plugin-sass/compiled/sass-loader/index.js):
+  Γò░ΓöÇΓû╢   ├ù 2 arguments required, but only 1 was passed.
+        Γöé   Γò╖
+        Γöé 7 Γöé     padding: rem(20px);
+        Γöé   Γöé              ^^^^^^^^^
+        Γöé   Γò╡
+        Γöé   C:\Users\Castel Technologies\Videos\march\src\pages\digit-cracker\digit-cracker.scss 7:14  root 
+stylesheet
+
+File: [36m./src/pages/dashboard/dashboard.scss:1:1[39m
+  ├ù Module build failed (from ./node_modules/@rspack/core/dist/cssExtractLoader.js):
+  Γò░ΓöÇΓû╢   ├ù Error: Module build failed (from ./node_modules/@rsbuild/plugin-sass/compiled/sass-loader/index.js):
+        Γöé     at C:\Users\Castel Technologies\Videos\march\node_modules\@rspack\core\dist\index.js:3275:107
+      
+[2mImport traces (entry ΓåÆ error):
+  ./src/main.tsx
+  ./src/app/AuthWrapper.tsx
+  ./src/app/App.tsx
+  ./src/app/app-root.tsx
+  ./src/app/app-content.jsx
+  ./src/pages/main/index.ts
+  ./src/pages/main/main.tsx
+  ./src/pages/dashboard/index.ts
+  ./src/pages/dashboard/dashboard.scss [1m[31m├ù[39m[22m[2m[22m
+
+File: [36m./src/pages/digit-cracker/digit-cracker.scss:1:1[39m
+  ├ù Module build failed (from ./node_modules/@rspack/core/dist/cssExtractLoader.js):
+  Γò░ΓöÇΓû╢   ├ù Error: Module build failed (from ./node_modules/@rsbuild/plugin-sass/compiled/sass-loader/index.js):
+        Γöé     at C:\Users\Castel Technologies\Videos\march\node_modules\@rspack\core\dist\index.js:3275:107
+      
+[2mImport traces (entry ΓåÆ error):
+  ./src/main.tsx
+  ./src/app/AuthWrapper.tsx
+  ./src/app/App.tsx
+  ./src/app/app-root.tsx
+  ./src/app/app-content.jsx
+  ./src/pages/main/index.ts
+  ./src/pages/main/main.tsx
+  ./src/pages/digit-cracker/index.tsx
+  ./src/pages/digit-cracker/digit-cracker.scss [1m[31m├ù[39m[22m[2m[22m
+
+error   build failed in [1m9.64[22m s
+error   Rspack build failed.
+    at file:///C:/Users/Castel%20Technologies/Videos/march/node_modules/@rsbuild/core/dist/131.js:4068:141
+    at C:\Users\Castel Technologies\Videos\march\node_modules\@rspack\core\dist\index.js:8095:46
+    at C:\Users\Castel Technologies\Videos\march\node_modules\@rspack\core\dist\index.js:6981:113
+    at done (C:\Users\Castel Technologies\Videos\march\node_modules\@rspack\lite-tapable\dist\index.cjs:373:13)
+    at AsyncParallelHook.callAsyncStageRange (C:\Users\Castel 
+Technologies\Videos\march\node_modules\@rspack\lite-tapable\dist\index.cjs:379:46)
+    at AsyncParallelHook.callAsync (C:\Users\Castel 
+Technologies\Videos\march\node_modules\@rspack\lite-tapable\dist\index.cjs:101:21)
+    at Cache.shutdown (C:\Users\Castel Technologies\Videos\march\node_modules\@rspack\core\dist\index.js:7034:33)
+    at C:\Users\Castel Technologies\Videos\march\node_modules\@rspack\core\dist\index.js:8094:28
+    at done (C:\Users\Castel Technologies\Videos\march\node_modules\@rspack\lite-tapable\dist\index.cjs:426:13)
+    at next (C:\Users\Castel Technologies\Videos\march\node_modules\@rspack\lite-tapable\dist\index.cjs:469:55)
