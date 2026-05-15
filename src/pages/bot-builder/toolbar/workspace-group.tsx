@@ -21,7 +21,7 @@ import {
 import { useDevice } from '@deriv-com/ui';
 import { localize } from '@deriv-com/translations';
 import ToolbarIcon from './toolbar-icon';
-import RemoteLinkGroup from './remote-link-group';
+
 
 const WorkspaceGroup = observer(() => {
     const { isDesktop } = useDevice();
@@ -216,7 +216,6 @@ const WorkspaceGroup = observer(() => {
                             </span>
                         }
                     />
-                    <RemoteLinkGroup />
                 </div>
             </div>
 

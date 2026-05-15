@@ -1,0 +1,129 @@
+@use 'components/shared/styles/constants' as *;
+@use 'components/shared/styles/mixins' as *;
+
+.connectivity-bar {
+    height: 5rem;
+    background: var(--general-section-1);
+    border-bottom: 1px solid var(--border-normal);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.6rem;
+    gap: 1.6rem;
+    z-index: 10;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+
+    &__section {
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+        flex: 1;
+
+        &:last-child {
+            flex: 0;
+        }
+    }
+
+    &__item {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        background: var(--general-main-1);
+        padding: 0.4rem 1rem;
+        border-radius: 6px;
+        border: 1px solid var(--border-normal);
+        height: 3.4rem;
+
+        &--expand {
+            flex: 1;
+        }
+    }
+
+    &__icon {
+        width: 1.6rem;
+        height: 1.6rem;
+        fill: var(--text-general);
+    }
+
+    &__label {
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: var(--text-less-prominent);
+    }
+
+    &__select, &__input {
+        background: transparent;
+        border: none;
+        color: var(--text-prominent);
+        font-size: 1.2rem;
+        width: 100%;
+        outline: none;
+
+        &--small {
+            width: 8rem;
+        }
+
+        &::placeholder {
+            color: var(--text-less-prominent);
+        }
+    }
+
+    &__divider {
+        width: 1px;
+        height: 2.4rem;
+        background: var(--border-normal);
+    }
+
+    &__status {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        font-size: 1.1rem;
+        font-weight: bold;
+        padding: 0.4rem 1rem;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+
+        svg {
+            width: 1.6rem;
+            height: 1.6rem;
+        }
+
+        &.connected {
+            color: var(--status-success);
+            background: var(--status-success-light);
+            border: 1px solid var(--status-success);
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.2);
+        }
+
+        &.disconnected {
+            color: var(--status-danger);
+            background: var(--status-danger-light);
+            border: 1px solid var(--status-danger);
+        }
+    }
+
+    &__button {
+        background: var(--brand-red-coral);
+        color: white;
+        border: none;
+        padding: 0.6rem 1.6rem;
+        border-radius: 6px;
+        font-weight: bold;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        height: 3.4rem;
+        white-space: nowrap;
+
+        &:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        &:active {
+            transform: translateY(0);
+        }
+    }
+}
