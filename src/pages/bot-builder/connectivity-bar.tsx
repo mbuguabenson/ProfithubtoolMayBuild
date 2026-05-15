@@ -1,13 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { localize } from '@deriv-com/translations';
-import { 
-    LabelPairedLinkMdRegularIcon,
-    LabelPairedLinkSlashMdRegularIcon,
-    LabelPairedGlobeMdRegularIcon,
-    LabelPairedTabMdRegularIcon,
-    LabelPairedCircleInfoMdRegularIcon
-} from '@deriv/quill-icons/LabelPaired';
+import { Link, Link2Off, Globe, Layout, Info } from 'lucide-react';
+
 import './connectivity-bar.scss';
 
 const ConnectivityBar = observer(() => {
@@ -56,7 +51,7 @@ const ConnectivityBar = observer(() => {
         <div className='connectivity-bar'>
             <div className='connectivity-bar__section'>
                 <div className='connectivity-bar__item'>
-                    <LabelPairedTabMdRegularIcon className='connectivity-bar__icon' />
+                    <Layout size={16} className='connectivity-bar__icon' />
                     <select 
                         className='connectivity-bar__select'
                         value={selected_tab} 
@@ -72,7 +67,7 @@ const ConnectivityBar = observer(() => {
                 <div className='connectivity-bar__divider' />
 
                 <div className='connectivity-bar__item connectivity-bar__item--expand'>
-                    <LabelPairedGlobeMdRegularIcon className='connectivity-bar__icon' />
+                    <Globe size={16} className='connectivity-bar__icon' />
                     <input 
                         type='text' 
                         className='connectivity-bar__input'
@@ -98,7 +93,7 @@ const ConnectivityBar = observer(() => {
 
             <div className='connectivity-bar__section'>
                 <div className={`connectivity-bar__status ${is_connected ? 'connected' : 'disconnected'}`}>
-                    {is_connected ? <LabelPairedLinkMdRegularIcon /> : <LabelPairedLinkSlashMdRegularIcon />}
+                    {is_connected ? <Link size={16} /> : <Link2Off size={16} />}
                     <span>{is_connected ? localize('LINKED') : localize('DISCONNECTED')}</span>
                 </div>
                 
