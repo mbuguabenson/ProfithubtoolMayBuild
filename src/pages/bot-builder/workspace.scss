@@ -5,7 +5,7 @@
     position: relative;
     width: calc(100vw - 3.2rem);
     height: var(--bot-content-height);
-    top: 0;
+    margin-top: 0.4rem;
     background: var(--general-section-1);
     border-radius: 12px;
     overflow: hidden;
@@ -29,7 +29,7 @@
 }
 
 .injectionDiv {
-    height: calc(100vh - 14.4rem);
+    height: calc(100vh - 19.2rem);
     position: relative;
     touch-action: none;
     overflow: hidden;

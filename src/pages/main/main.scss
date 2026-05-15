@@ -599,7 +599,7 @@
 
 .bot-builder {
     position: absolute;
-    top: 8.4rem;
+    top: 4.8rem;
     left: 0;
     right: 0;
     bottom: 0;
@@ -607,9 +607,9 @@
     visibility: hidden;
     background: var(--general-section-1);
     width: 100%;
-    height: calc(100vh - 9.6rem);
-    min-height: calc(100vh - 9.6rem); // Ensure minimum height
-    max-height: calc(100vh - 9.6rem); // Prevent overflow
+    height: calc(100vh - 13.2rem);
+    min-height: calc(100vh - 13.2rem); // Ensure minimum height
+    max-height: calc(100vh - 13.2rem); // Prevent overflow
 
     &--active {
         visibility: visible;
@@ -639,12 +639,12 @@
     }
 
     @include mobile-or-tablet-screen {
-        top: 8.4rem;
+        top: 4rem; // Mobile tab list height is approx 4rem
         inset-inline-start: 0;
         width: 100vw;
-        height: calc(100vh - 8.4rem);
-        min-height: calc(100vh - 8.4rem); // Consistent height on mobile
-        max-height: calc(100vh - 8.4rem);
+        height: calc(100vh - 11.2rem);
+        min-height: calc(100vh - 11.2rem);
+        max-height: calc(100vh - 11.2rem);
     }
 }
 
