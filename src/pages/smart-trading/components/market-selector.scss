@@ -12,6 +12,12 @@
         transition: all 0.2s ease;
         min-width: 180px;
 
+        @media (max-width: 480px) {
+            min-width: 100px;
+            padding: 8px 8px;
+            font-size: 12px;
+        }
+
         &:hover {
             background: rgba(255, 255, 255, 0.08);
             border-color: rgba(255, 255, 255, 0.2);

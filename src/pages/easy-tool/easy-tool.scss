@@ -751,11 +751,18 @@
         }
 
         &__vitals-row {
-            gap: 8px;
-            justify-content: flex-start;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: nowrap; // Force one line
+            width: fit-content;
+            margin: 0 auto;
 
-            .v {
-                font-size: 1.6rem !important; // Maintain uniform look
+            .v-item {
+                flex-shrink: 0; // Prevent squishing
+                
+                .v {
+                    font-size: 1.3rem !important; 
+                }
             }
         }
 
@@ -779,12 +786,17 @@
         }
 
         .digit-bar-v2.large {
-            gap: 6px;
-            flex-wrap: wrap;
+            display: grid; // Use grid for specific 2-line layout
+            grid-template-columns: repeat(5, 1fr); // 0-4 and 5-9
+            gap: 8px;
+            width: 100%;
+            max-width: 320px;
+            margin: 0 auto;
 
             .digit-btn-v2 {
-                width: 32px;
-                height: 32px;
+                width: 100%;
+                aspect-ratio: 1; // Keep them square
+                height: auto;
                 font-size: 1.4rem;
                 border-radius: 8px;
             }
