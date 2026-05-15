@@ -438,6 +438,22 @@ export const ToolboxItems = () => {
                     <Block type='total_profit' />
                     <Block type='total_runs' />
                 </Category>
+                <Category name={localize('Cross-tab Communication')} id='cross_tab_communication'>
+                    <Block type='broadcast_send'>
+                        <Value name='KEY'>
+                            <Shadow type='text'>
+                                <Field name='TEXT'>my_key</Field>
+                            </Shadow>
+                        </Value>
+                    </Block>
+                    <Block type='broadcast_receive'>
+                        <Value name='KEY'>
+                            <Shadow type='text'>
+                                <Field name='TEXT'>my_key</Field>
+                            </Shadow>
+                        </Value>
+                    </Block>
+                </Category>
             </Category>
 
             <Category name={localize('🔥 Logics')} id='fire_logics'>

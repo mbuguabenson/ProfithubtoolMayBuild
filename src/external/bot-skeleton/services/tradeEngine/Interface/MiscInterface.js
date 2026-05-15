@@ -2,6 +2,15 @@ import { localize } from '@deriv-com/translations';
 import { observer as globalObserver } from '../../../utils/observer';
 import { notify } from '../utils/broadcast';
 
+const bc = new BroadcastChannel('bot_communication');
+const remote_values = {};
+
+bc.onmessage = event => {
+    if (event.data && event.data.key) {
+        remote_values[event.data.key] = event.data.value;
+    }
+};
+
 const getMiscInterface = tradeEngine => {
     return {
         notify: args => globalObserver.emit('ui.log.notify', args),
@@ -26,6 +35,12 @@ const getMiscInterface = tradeEngine => {
         getTotalRuns: () => tradeEngine.getTotalRuns(),
         getBalance: type => tradeEngine.getBalance(type),
         getTotalProfit: toString => tradeEngine.getTotalProfit(toString, tradeEngine.tradeOptions.currency),
+        sendToRemote: (key, value) => {
+            bc.postMessage({ key, value });
+        },
+        readFromRemote: key => {
+            return remote_values[key];
+        },
     };
 };
 
