@@ -12,7 +12,6 @@ import SaveModal from '../dashboard/bot-list/save-modal';
 import BotBuilderTourHandler from '../tutorials/dbot-tours/bot-builder-tour';
 import QuickStrategy1 from './quick-strategy';
 import WorkspaceWrapper from './workspace-wrapper';
-import ConnectivityBar from './connectivity-bar';
 import './bot-builder.scss';
 
 const BotBuilder = observer(() => {
@@ -124,7 +123,6 @@ const BotBuilder = observer(() => {
                     'bot-builder--tour-active': active_tour,
                 })}
             >
-                <ConnectivityBar />
                 <div id='scratch_div' ref={el_ref}>
                     <WorkspaceWrapper />
                 </div>
