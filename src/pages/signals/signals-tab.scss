@@ -276,12 +276,24 @@
 
     &__signals-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-        gap: 2.4rem;
+        grid-template-columns: repeat(8, 1fr);
+        gap: 1.2rem;
+
+        @media (width <= 1600px) {
+            grid-template-columns: repeat(6, 1fr);
+        }
+
+        @media (width <= 1200px) {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        @media (width <= 900px) {
+            grid-template-columns: repeat(2, 1fr);
+        }
 
         @media (width <= 480px) {
             grid-template-columns: 1fr;
-            gap: 1.6rem;
+            gap: 1rem;
         }
     }
 
@@ -766,9 +778,9 @@
     transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
 
     @media (width <= 480px) {
-        padding: 1.8rem;
-        gap: 1.6rem;
-        border-radius: 1.6rem;
+        padding: 1rem;
+        gap: 1.2rem;
+        border-radius: 1.2rem;
     }
 
     .card-glow {
