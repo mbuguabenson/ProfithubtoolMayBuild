@@ -37,6 +37,26 @@
         flex-wrap: wrap;
         width: 100%;
         margin-bottom: 4rem;
+
+        @media (width <= 768px) {
+            display: grid !important;
+            grid-template-columns: repeat(5, 1fr) !important;
+            gap: 12px !important;
+            padding: 0 !important;
+
+            .digit-item-container {
+                width: 100% !important;
+                
+                .digit-ring {
+                    width: 6rem !important;
+                    height: 6rem !important;
+                    margin: 0 auto;
+                    
+                    .digit-val { font-size: 1.8rem !important; }
+                    .digit-pct-inner { font-size: 0.9rem !important; }
+                }
+            }
+        }
     }
 
     .digit-item-container {

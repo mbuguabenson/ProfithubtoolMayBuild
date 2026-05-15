@@ -706,23 +706,23 @@
         }
 
         .digit-bar-v2.large {
-            display: grid !important;
-            grid-template-columns: repeat(5, 1fr) !important;
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: nowrap !important;
+            overflow-x: auto !important;
+            justify-content: flex-start !important;
             gap: 10px !important;
             width: 100% !important;
-            max-width: 400px !important;
-            margin: 0 auto !important;
+            padding: 0 10px !important;
+
+            &::-webkit-scrollbar { display: none; }
 
             .digit-btn-v2 {
-                width: 100% !important;
-                aspect-ratio: 1 !important;
-                height: auto !important;
+                flex-shrink: 0 !important;
+                width: 4.4rem !important;
+                height: 4.4rem !important;
                 font-size: 1.6rem !important;
-                border-radius: 12px !important;
-                padding: 0 !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
+                border-radius: 10px !important;
             }
         }
     }
