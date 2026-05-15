@@ -668,68 +668,61 @@
 }
 
 // Mobile & Tablet Responsive Breakpoints
-@media (width <= 1024px) {
+@media (width <= 768px) {
     .easy-tool {
-        padding: 16px;
+        padding: 12px;
 
         &__header {
             flex-direction: row !important;
-            gap: 1.6rem;
+            gap: 1.2rem;
             align-items: center;
             overflow-x: auto;
-            justify-content: flex-start;
+            justify-content: center;
             white-space: nowrap;
-            padding: 1.2rem 1.6rem;
+            padding: 1.2rem;
             -webkit-overflow-scrolling: touch;
-            mask-image: linear-gradient(to right, #000 85%, transparent 100%);
+            mask-image: none;
+            margin-bottom: 16px;
 
             &::-webkit-scrollbar {
                 display: none;
             }
         }
 
-        &__title {
-            font-size: 1.8rem;
-            text-align: center;
-        }
-
         &__vitals-row {
-            gap: 1.2rem;
-            flex-wrap: wrap;
-            justify-content: center;
+            display: flex !important;
+            gap: 12px !important;
+            justify-content: center !important;
+            flex-wrap: nowrap !important;
+            width: 100% !important;
 
             .v-item {
+                flex-shrink: 0 !important;
+                
                 .v {
-                    font-size: 1.4rem !important;
+                    font-size: 1.3rem !important; 
                 }
             }
         }
 
-        &__digit-selector-wrapper {
-            padding: 1.6rem;
-
-            .selector-label {
-                font-size: 1.1rem;
-            }
-        }
-
         .digit-bar-v2.large {
-            gap: 0.8rem;
+            display: grid !important;
+            grid-template-columns: repeat(5, 1fr) !important;
+            gap: 10px !important;
+            width: 100% !important;
+            max-width: 400px !important;
+            margin: 0 auto !important;
 
             .digit-btn-v2 {
-                width: 4rem;
-                height: 4rem;
-                font-size: 1.6rem;
-                border-radius: 1.2rem;
-            }
-        }
-
-        .section-card {
-            padding: 1.8rem;
-
-            &__header {
-                font-size: 1.1rem;
-                margin-bottom: 1.6rem;
+                width: 100% !important;
+                aspect-ratio: 1 !important;
+                height: auto !important;
+                font-size: 1.6rem !important;
+                border-radius: 12px !important;
+                padding: 0 !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
             }
         }
     }
