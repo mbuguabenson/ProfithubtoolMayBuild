@@ -18,7 +18,7 @@ import {
     LabelPairedMagnifyingGlassPlusMdRegularIcon,
     LabelPairedObjectsAlignLeftMdRegularIcon,
 } from '@deriv/quill-icons/LabelPaired';
-import { useDevice } from '@deriv-com/ui';
+
 import { localize } from '@deriv-com/translations';
 import ToolbarIcon from './toolbar-icon';
 import RemoteLinkGroup from './remote-link-group';

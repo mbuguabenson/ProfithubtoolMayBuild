@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Popover } from 'react-tiny-popover';
 import { localize } from '@deriv-com/translations';

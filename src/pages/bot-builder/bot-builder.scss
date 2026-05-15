@@ -89,20 +89,8 @@
 }
 
 .bot-builder {
-    padding: 0 !important;
-    margin: 0 !important;
     height: 100%;
     width: 100%;
-    display: flex;
-    flex-direction: column;
-
-    #scratch_div {
-        margin-top: 0 !important;
-        padding-top: 0 !important;
-        border-radius: 0; // Seamless IDE look
-        width: 100%;
-        height: 100%;
-    }
 }
 
 .profithub-minimized-icon {
