@@ -165,9 +165,6 @@ export const generateOAuthURL = async () => {
         const app_id = is_local ? APP_IDS.LOCALHOST : '33hCbJ8QWyfpVny8Mu4ZU';
         
         // Use exact origin for production (no trailing slash), dynamic for local
-        const redirect_uri = is_local 
-            ? encodeURIComponent(`${window.location.origin}/`)
-            : encodeURIComponent(window.location.origin.replace(/\/$/, ''));
         
         const state = Math.random().toString(36).substring(2, 15);
         
@@ -178,7 +175,7 @@ export const generateOAuthURL = async () => {
             
         // New v4 Auth URL with PKCE - Cleaned and fully encoded
         const auth_url = new URL('https://auth.deriv.com/oauth2/auth');
-        auth_url.searchParams.set('client_id', app_id);
+        auth_url.searchParams.set('client_id', String(app_id));
         auth_url.searchParams.set('redirect_uri', is_local ? `${window.location.origin}/` : 'https://profithub.co.ke');
         auth_url.searchParams.set('response_type', 'code');
         auth_url.searchParams.set('state', state);
