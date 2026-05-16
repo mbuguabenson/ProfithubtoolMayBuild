@@ -70,14 +70,34 @@ export const AuthWrapper = () => {
                     const data = await response.json();
                     if (data.access_token) {
                         console.log('[Auth] Token exchange successful');
-                        // In a real app, you'd call an API with this token to get the account list
-                        // For now, we'll store it in the keys used by api-base.ts
+                        
+                        // 1. Store New API specific tokens
                         localStorage.setItem('new_api_access_token', data.access_token);
                         localStorage.setItem('new_api_account_id', data.account_id || '');
-                        // If there are multiple accounts, they'd be in data.accounts
-                        if (data.accounts) {
+                        
+                        // 2. Map New API response to the format expected by legacy stores
+                        const v4LoginInfo: URLUtils.LoginInfo[] = [];
+                        
+                        if (data.accounts && Array.isArray(data.accounts)) {
+                            data.accounts.forEach((acc: any) => {
+                                v4LoginInfo.push({
+                                    loginid: acc.loginid,
+                                    token: acc.token || data.access_token, // Fallback to main token
+                                    currency: acc.currency || '',
+                                });
+                            });
                             localStorage.setItem('new_api_accounts_list', JSON.stringify(data.accounts));
+                        } else {
+                            // If only one account is returned, create a single entry
+                            v4LoginInfo.push({
+                                loginid: data.account_id,
+                                token: data.access_token,
+                                currency: '', // Will be updated on first balance call
+                            });
                         }
+                        
+                        // 3. Update legacy localStorage keys so the rest of the app "sees" the login
+                        await setLocalStorageToken(v4LoginInfo, []);
                     } else {
                         console.error('[Auth] Token exchange failed:', data.error_description || data.error);
                     }
