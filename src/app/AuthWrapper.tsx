@@ -49,8 +49,23 @@ export const AuthWrapper = () => {
             try {
                 const urlParams = new URLSearchParams(window.location.search);
                 const code = urlParams.get('code');
+                const state = urlParams.get('state');
                 const code_verifier = localStorage.getItem('code_verifier');
+                
                 if (code) {
+                    // 1. Validate State (CSRF)
+                    if (state) {
+                        const { validateCSRFToken, clearCSRFToken } = await import('@/components/shared/utils/config/config');
+                        if (!validateCSRFToken(state)) {
+                            console.error('[Auth] State validation failed! Potential CSRF attack.');
+                            window.history.replaceState({}, document.title, window.location.pathname);
+                            setIsAuthComplete(true);
+                            return;
+                        }
+                        clearCSRFToken();
+                    }
+
+                    // 2. Validate Verifier
                     if (!code_verifier) {
                         console.error('[Auth] Authorization code found but code_verifier is MISSING from localStorage!');
                         console.warn('[Auth] This usually happens if you start login on www.profithub.co.ke but redirect to profithub.co.ke. Please ensure you are on the correct domain.');

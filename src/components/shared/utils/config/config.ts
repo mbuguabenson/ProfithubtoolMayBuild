@@ -161,6 +161,43 @@ const legacyGenerateOAuthURL = () => {
     return login_url;
 };
 
+/**
+ * Generates a cryptographically secure CSRF token
+ * @returns A random base64url-encoded string
+ */
+export const generateCSRFToken = (): string => {
+    const array = new Uint8Array(32);
+    crypto.getRandomValues(array);
+    const base64 = btoa(String.fromCharCode(...array));
+    return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+};
+
+/**
+ * Validates CSRF token from OAuth callback
+ * @param token The token to validate
+ * @returns true if token is valid and not expired
+ */
+export const validateCSRFToken = (token: string): boolean => {
+    const storedToken = localStorage.getItem('oauth_csrf_token');
+    const timestamp = localStorage.getItem('oauth_csrf_token_timestamp');
+
+    if (!storedToken || !timestamp || storedToken !== token) {
+        return false;
+    }
+
+    // Check if token is expired (10 minutes = 600000ms)
+    const tokenAge = Date.now() - parseInt(timestamp, 10);
+    return tokenAge <= 600000;
+};
+
+/**
+ * Clears CSRF token from localStorage after successful validation
+ */
+export const clearCSRFToken = (): void => {
+    localStorage.removeItem('oauth_csrf_token');
+    localStorage.removeItem('oauth_csrf_token_timestamp');
+};
+
 export const getLegacyAppId = () => {
     return isLocal() ? APP_IDS.LOCALHOST : '121856';
 };
@@ -170,9 +207,10 @@ export const generateOAuthURL = async () => {
         const is_local = isLocal();
         const app_id = is_local ? APP_IDS.LOCALHOST : DERIV_V4_CLIENT_ID;
         
-        // Use exact origin for production (no trailing slash), dynamic for local
-        
-        const state = Math.random().toString(36).substring(2, 15);
+        // CSRF Protection
+        const state = generateCSRFToken();
+        localStorage.setItem('oauth_csrf_token', state);
+        localStorage.setItem('oauth_csrf_token_timestamp', Date.now().toString());
         
         // PKCE Flow
         const code_verifier = generateCodeVerifier();
