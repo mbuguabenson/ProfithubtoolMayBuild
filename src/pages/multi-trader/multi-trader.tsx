@@ -6,7 +6,7 @@ import './multi-trader.scss';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-type TradeType = 'highlow' | 'risefall' | 'evenodd' | 'overunder';
+type TradeType = 'highlow' | 'risefall' | 'evenodd' | 'overunder' | 'accumulator' | 'multiplier';
 type StatusVariant = 'connected' | 'disconnected' | 'connecting';
 
 interface TradeConfig {
@@ -20,7 +20,10 @@ interface TradeConfig {
     label: string;
     strategyId: string;
     selected_tick?: number;
-    barrier?: number;
+    barrier?: number | string;
+    prediction?: number;
+    growth_rate?: number;
+    multiplier?: number;
 }
 
 interface LogEntry {
@@ -30,11 +33,22 @@ interface LogEntry {
     type: 'default' | 'success' | 'error' | 'warning' | 'info';
 }
 
+interface Transaction {
+    id: number;
+    time: string;
+    type: string;
+    entry: string | number;
+    exit: string | number;
+    buy_price: number;
+    profit: number;
+}
+
 interface TradeResult {
     profit: number;
     message: string;
     strategyId: string;
     stakeUsed: number;
+    transaction: Transaction;
 }
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -47,7 +61,7 @@ const WS_URL = `wss://${SERVER_URL}/websockets/v3?app_id=${APP_ID}`;
 
 const round2 = (n: number) => Math.round(n * 100) / 100;
 
-function getTradeConfigs(type: TradeType, stake: number, ticks: number): TradeConfig[] {
+function getTradeConfigs(type: TradeType, stake: number, ticks: number, predictions: { over: number; under: number }): TradeConfig[] {
     const common = {
         proposal: 1,
         amount: stake,
@@ -74,8 +88,17 @@ function getTradeConfigs(type: TradeType, stake: number, ticks: number): TradeCo
             ];
         case 'overunder':
             return [
-                { ...common, contract_type: 'DIGITOVER',  barrier: 5, label: 'Digit Over 5',  strategyId: 'overunder_DIGITOVER'  },
-                { ...common, contract_type: 'DIGITUNDER', barrier: 4, label: 'Digit Under 4', strategyId: 'overunder_DIGITUNDER' },
+                { ...common, contract_type: 'DIGITOVER',  barrier: predictions.over, label: `Over ${predictions.over}`,  strategyId: 'overunder_DIGITOVER'  },
+                { ...common, contract_type: 'DIGITUNDER', barrier: predictions.under, label: `Under ${predictions.under}`, strategyId: 'overunder_DIGITUNDER' },
+            ];
+        case 'accumulator':
+            return [
+                { ...common, contract_type: 'ACCU', growth_rate: 0.01, label: 'Accumulator', strategyId: 'accumulator_ACCU' }
+            ];
+        case 'multiplier':
+            return [
+                { ...common, contract_type: 'MULTUP',   multiplier: 10, label: 'Multiplier Up',   strategyId: 'multiplier_MULTUP' },
+                { ...common, contract_type: 'MULTDOWN', multiplier: 10, label: 'Multiplier Down', strategyId: 'multiplier_MULTDOWN' }
             ];
         default:
             return [];
@@ -88,7 +111,6 @@ const MultiTrader: React.FC = observer(() => {
     const { client } = useStore();
     // Connection
     const [status, setStatus] = useState<StatusVariant>('disconnected');
-    const [statusMsg, setStatusMsg] = useState('Disconnected');
     const wsRef = useRef<WebSocket | null>(null);
     const reqCounter = useRef(1);
     const resolvers   = useRef<Map<number, { resolve: (d: any) => void; reject: (e: any) => void; isSubscription?: boolean }>>(new Map());
@@ -104,19 +126,25 @@ const MultiTrader: React.FC = observer(() => {
 
     // State
     const [running,  setRunning]  = useState(false);
-    const [balance,  setBalance]  = useState<number | null>(null);
     const [totalProfit, setTotalProfit] = useState(0);
     const [totalRounds, setTotalRounds] = useState(0);
     const [roundWins,   setRoundWins]   = useState(0);
+    const [roundLosses, setRoundLosses] = useState(0);
+    const [totalStakeUsed, setTotalStakeUsed] = useState(0);
+    const [totalPayout, setTotalPayout] = useState(0);
     const [totalTrades, setTotalTrades] = useState(0);
-    const [maxStake,    setMaxStake]    = useState(0.5);
+    const [overPrediction, setOverPrediction] = useState(5);
+    const [underPrediction, setUnderPrediction] = useState(4);
     const [logs, setLogs] = useState<LogEntry[]>([{ id: 0, time: '', message: 'Awaiting connection…', type: 'default' }]);
+    const [transactions, setTransactions] = useState<Transaction[]>([]);
+    const [isLogExpanded, setIsLogExpanded] = useState(false);
 
     // Mutable refs for trading loop
     const runningRef       = useRef(false);
     const totalProfitRef   = useRef(0);
     const totalRoundsRef   = useRef(0);
     const roundWinsRef     = useRef(0);
+    const roundLossesRef   = useRef(0);
     const totalTradesRef   = useRef(0);
     const strategyStakes   = useRef<Record<string, number>>({});
     const logId            = useRef(1);
@@ -164,17 +192,12 @@ const MultiTrader: React.FC = observer(() => {
             return;
         }
 
-        if (data.msg_type === 'balance') {
-            setBalance(data.balance.balance);
-        }
         if (data.msg_type === 'authorize') {
             if (data.error) {
                 setStatus('disconnected');
-                setStatusMsg(`Auth failed: ${data.error.message}`);
                 addLog(`Authorization failed: ${data.error.message}`, 'error');
             } else {
                 setStatus('connected');
-                setStatusMsg(`✅ ${data.authorize.loginid}`);
                 addLog(`Authorized as ${data.authorize.loginid}`, 'success');
                 wsRef.current?.send(JSON.stringify({ balance: 1, subscribe: 1 }));
             }
@@ -184,15 +207,12 @@ const MultiTrader: React.FC = observer(() => {
         }
     }, [addLog]);
 
-    // ── Connect ───────────────────────────────────────────────────────────────
-
     const connect = useCallback(() => {
         if (wsRef.current?.readyState === WebSocket.OPEN) return;
         const currentToken = client.getToken();
         if (!currentToken) { addLog('Please log in first.', 'error'); return; }
 
         setStatus('connecting');
-        setStatusMsg('Connecting…');
 
         const ws = new WebSocket(WS_URL);
         wsRef.current = ws;
@@ -200,22 +220,28 @@ const MultiTrader: React.FC = observer(() => {
         ws.onmessage = handleMessage;
         ws.onclose   = () => {
             setStatus('disconnected');
-            setStatusMsg('Disconnected ❌');
             if (runningRef.current) { runningRef.current = false; setRunning(false); addLog('Connection lost. Bot stopped.', 'error'); }
         };
         ws.onerror   = () => addLog('WebSocket error — check console.', 'error');
     }, [client, handleMessage, addLog]);
+
+    // Auto-connect on mount
+    useEffect(() => {
+        if (status === 'disconnected' && client.getToken()) {
+            connect();
+        }
+    }, [client, connect, status]);
 
     // ── Strategy stakes init ──────────────────────────────────────────────────
 
     const initStakes = useCallback((stake: number) => {
         strategyStakes.current = {};
         tradeTypes.forEach(type => {
-            getTradeConfigs(type, stake, ticks).forEach(c => {
+            getTradeConfigs(type, stake, ticks, { over: overPrediction, under: underPrediction }).forEach(c => {
                 strategyStakes.current[c.strategyId] = stake;
             });
         });
-    }, [tradeTypes, ticks]);
+    }, [tradeTypes, ticks, overPrediction, underPrediction]);
 
     // ── Track contract ────────────────────────────────────────────────────────
 
@@ -234,8 +260,17 @@ const MultiTrader: React.FC = observer(() => {
                         profit,
                         strategyId,
                         stakeUsed,
-                        message: `[${strategyId.toUpperCase()} - ${label}] ${status} (${profit >= 0 ? '+' : ''}${profit.toFixed(2)} USD) | Entry: ${entry} | Exit: ${exit}`,
-                    });
+                        message: `[ID: ${req_id}] [${strategyId.toUpperCase()}] - ${label} | ${status}`,
+                        transaction: {
+                            id: req_id,
+                            time: new Date().toLocaleTimeString(),
+                            type: label,
+                            entry,
+                            exit,
+                            buy_price: stakeUsed,
+                            profit,
+                        }
+                    } as any);
                 },
                 reject,
             });
@@ -268,7 +303,7 @@ const MultiTrader: React.FC = observer(() => {
             // Build all configs with current stakes
             const allConfigs: (TradeConfig & { symbol: string })[] = [];
             _tradeTypes.forEach(type => {
-                getTradeConfigs(type, _baseStake, _ticks).forEach(cfg => {
+                getTradeConfigs(type, _baseStake, _ticks, { over: overPrediction, under: underPrediction }).forEach(cfg => {
                     const stake = strategyStakes.current[cfg.strategyId] ?? _baseStake;
                     allConfigs.push({ ...cfg, amount: stake, symbol: _market });
                 });
@@ -276,7 +311,6 @@ const MultiTrader: React.FC = observer(() => {
 
             if (allConfigs.length === 0) { addLog('No trade types selected.', 'warning'); runningRef.current = false; setRunning(false); return; }
 
-            setMaxStake(Math.max(...allConfigs.map(c => c.amount)));
             addLog(`Round start — ${allConfigs.length} trades on ${_market}`, 'info');
 
             // Propose
@@ -320,26 +354,37 @@ const MultiTrader: React.FC = observer(() => {
             let roundProfit = 0;
             let roundWon    = false;
             results.forEach(r => {
-                roundProfit += r.profit;
-                addLog(r.message, r.profit >= 0 ? 'success' : 'error');
-                if (r.profit > 0) {
-                    strategyStakes.current[r.strategyId] = _baseStake;
-                    addLog(`[${r.strategyId}] WIN → stake reset to ${_baseStake.toFixed(2)}`, 'success');
+                const res = r as any;
+                roundProfit += res.profit;
+                addLog(res.message, res.profit >= 0 ? 'success' : 'error');
+                setTransactions(prev => [res.transaction, ...prev].slice(0, 50));
+
+                if (res.profit > 0) {
+                    strategyStakes.current[res.strategyId] = _baseStake;
                     roundWon = true;
                 } else {
-                    const newStake = round2(r.stakeUsed * _martingale);
-                    strategyStakes.current[r.strategyId] = newStake;
-                    addLog(`[${r.strategyId}] LOSS → stake ×${_martingale} = ${newStake.toFixed(2)}`, 'error');
+                    const newStake = round2(res.stakeUsed * _martingale);
+                    strategyStakes.current[res.strategyId] = newStake;
                 }
             });
 
             totalProfitRef.current += roundProfit;
             totalRoundsRef.current++;
-            if (roundWon) roundWinsRef.current++;
+            if (roundWon) {
+                roundWinsRef.current++;
+            } else {
+                roundLossesRef.current++;
+            }
+            
+            const totalStakeInRound = results.reduce((acc, curr) => acc + curr.stakeUsed, 0);
+            const totalPayoutInRound = results.reduce((acc, curr) => acc + (curr.stakeUsed + curr.profit), 0);
+            
+            setTotalStakeUsed(prev => prev + totalStakeInRound);
+            setTotalPayout(prev => prev + totalPayoutInRound);
             setTotalProfit(totalProfitRef.current);
             setTotalRounds(totalRoundsRef.current);
             setRoundWins(roundWinsRef.current);
-            setMaxStake(Math.max(...Object.values(strategyStakes.current)));
+            setRoundLosses(roundLossesRef.current);
 
             addLog(`Round P/L: ${roundProfit >= 0 ? '+' : ''}${roundProfit.toFixed(2)} | Total: ${totalProfitRef.current >= 0 ? '+' : ''}${totalProfitRef.current.toFixed(2)} USD`,
                    roundProfit >= 0 ? 'success' : 'warning');
@@ -362,8 +407,9 @@ const MultiTrader: React.FC = observer(() => {
         if (wsRef.current?.readyState !== WebSocket.OPEN) { addLog('Not connected.', 'error'); return; }
         const stake = round2(Math.max(0.5, baseStake));
         initStakes(stake);
-        totalProfitRef.current = 0; totalRoundsRef.current = 0; roundWinsRef.current = 0; totalTradesRef.current = 0;
-        setTotalProfit(0); setTotalRounds(0); setRoundWins(0); setTotalTrades(0);
+        totalProfitRef.current = 0; totalRoundsRef.current = 0; roundWinsRef.current = 0; roundLossesRef.current = 0; totalTradesRef.current = 0;
+        setTotalProfit(0); setTotalRounds(0); setRoundWins(0); setRoundLosses(0); setTotalTrades(0); setTotalStakeUsed(0); setTotalPayout(0);
+        setTransactions([]);
         runningRef.current = true;
         setRunning(true);
         addLog('Bot started with independent Martingale per strategy!', 'success');
@@ -376,8 +422,9 @@ const MultiTrader: React.FC = observer(() => {
     }, [addLog]);
 
     const resetStats = useCallback(() => {
-        totalProfitRef.current = 0; totalRoundsRef.current = 0; roundWinsRef.current = 0; totalTradesRef.current = 0;
-        setTotalProfit(0); setTotalRounds(0); setRoundWins(0); setTotalTrades(0);
+        totalProfitRef.current = 0; totalRoundsRef.current = 0; roundWinsRef.current = 0; roundLossesRef.current = 0; totalTradesRef.current = 0;
+        setTotalProfit(0); setTotalRounds(0); setRoundWins(0); setRoundLosses(0); setTotalTrades(0); setTotalStakeUsed(0); setTotalPayout(0);
+        setTransactions([]);
         initStakes(round2(Math.max(0.5, baseStake)));
         setLogs([{ id: logId.current++, time: '', message: 'Stats reset.', type: 'warning' }]);
     }, [baseStake, initStakes]);
@@ -395,123 +442,183 @@ const MultiTrader: React.FC = observer(() => {
 
     return (
         <div className='multi-trader'>
-            <h1 className='multi-trader__title'>Deriv Multi-Strategy Tick Bot</h1>
-
-            {/* Connection */}
-            <div className='multi-trader__connection'>
-                <button className='multi-trader__connection-btn' onClick={connect} disabled={isConnected}>
-                    {status === 'connecting' ? 'Connecting…' : 'Connect'}
-                </button>
-                <span className={`multi-trader__connection-status multi-trader__connection-status--${status}`}>
-                    {statusMsg}
-                </span>
-            </div>
-
-            {/* Config */}
-            <div className='multi-trader__config'>
-                <h2>Trading Parameters</h2>
-                <div className='multi-trader__config-grid'>
-                    <div className='multi-trader__config-field'>
-                        <label>Market (Symbol)</label>
-                        <select value={market} onChange={e => setMarket(e.target.value)} disabled={running}>
-                            <optgroup label='Continuous Volatility'>
-                                <option value='V10_1S'>Volatility 10 (1s)</option>
-                                <option value='V25_1S'>Volatility 25 (1s)</option>
-                                <option value='V50_1S'>Volatility 50 (1s)</option>
-                                <option value='V75_1S'>Volatility 75 (1s)</option>
-                                <option value='V100_1S'>Volatility 100 (1s)</option>
-                            </optgroup>
-                            <optgroup label='Traditional Volatility'>
-                                <option value='R_100'>Volatility 100</option>
-                                <option value='R_75'>Volatility 75</option>
-                                <option value='R_50'>Volatility 50</option>
-                            </optgroup>
-                        </select>
+            <div className='multi-trader__content'>
+                {/* Parameters Section */}
+                <div className='multi-trader__card multi-trader__config-card'>
+                    <div className='multi-trader__card-header'>
+                        <h2>⚙️ Trading Parameters</h2>
                     </div>
-                    <div className='multi-trader__config-field'>
-                        <label>Base Stake ($)</label>
-                        <input type='number' value={baseStake} min={0.5} step={0.01} disabled={running} onChange={e => setBaseStake(round2(Math.max(0.5, parseFloat(e.target.value) || 0.5)))} />
-                    </div>
-                    <div className='multi-trader__config-field'>
-                        <label>Duration (Ticks)</label>
-                        <input type='number' value={ticks} min={5} max={10} step={1} disabled={running} onChange={e => setTicks(Math.max(5, parseInt(e.target.value) || 5))} />
-                    </div>
-                    <div className='multi-trader__config-field'>
-                        <label>Martingale Factor</label>
-                        <input type='number' value={martingale} min={1.1} step={0.01} disabled={running} onChange={e => setMartingale(parseFloat(e.target.value) || 2)} />
-                    </div>
-                    <div className='multi-trader__config-field'>
-                        <label>Take Profit ($)</label>
-                        <input type='number' value={takeProfit} min={0} step={1} disabled={running} onChange={e => setTakeProfit(parseFloat(e.target.value) || 10)} />
-                    </div>
-                    <div className='multi-trader__config-field'>
-                        <label>Stop Loss ($)</label>
-                        <input type='number' value={stopLoss} min={0} step={1} disabled={running} onChange={e => setStopLoss(Math.max(0, parseFloat(e.target.value) || 5))} />
-                    </div>
-                </div>
-
-                {/* Trade type multi-select as toggle buttons */}
-                <div className='multi-trader__config-multiselect'>
-                    <label>Trade Types (select multiple)</label>
-                    <select multiple value={tradeTypes} disabled={running}
-                        onChange={e => setTradeTypes(Array.from(e.target.selectedOptions).map(o => o.value as TradeType))}>
-                        <option value='highlow'>High / Low (Tick)</option>
-                        <option value='risefall'>Rise / Fall (Directional)</option>
-                        <option value='evenodd'>Even / Odd (Digit)</option>
-                        <option value='overunder'>Over 5 / Under 4 (Digit)</option>
-                    </select>
-                    <p>Hold Ctrl / Cmd to select multiple types.</p>
-                </div>
-            </div>
-
-            {/* Controls + Stats */}
-            <div className='multi-trader__controls-row'>
-                <div className='multi-trader__buttons'>
-                    <button className='multi-trader__buttons-start' onClick={startBot} disabled={!isConnected || running}>
-                        ▶ Start Bot
-                    </button>
-                    <button className='multi-trader__buttons-stop' onClick={stopBot} disabled={!running}>
-                        ■ Stop Bot
-                    </button>
-                    <button className='multi-trader__buttons-reset' onClick={resetStats} disabled={running}>
-                        ↺ Reset Stats
-                    </button>
-                </div>
-
-                <div className='multi-trader__stats'>
-                    <div className='multi-trader__stats-row'>
-                        <span>Balance</span>
-                        <span>{balance !== null ? `${balance.toFixed(2)} USD` : '-- USD'}</span>
-                    </div>
-                    <div className='multi-trader__stats-row'>
-                        <span>Total P/L</span>
-                        <span className={`multi-trader__stats-profit--${totalProfit >= 0 ? 'positive' : 'negative'}`}>
-                            {totalProfit >= 0 ? '+' : ''}{totalProfit.toFixed(2)} USD
-                        </span>
-                    </div>
-                    <div className='multi-trader__stats-row'>
-                        <span>Max Stake</span>
-                        <span>{maxStake.toFixed(2)} USD</span>
-                    </div>
-                    <hr className='multi-trader__stats-divider' />
-                    <div className='multi-trader__stats-mini'>
-                        <span>Rounds: <span>{totalRounds}</span></span>
-                        <span>Trades: <span>{totalTrades}</span></span>
-                        <span>Win Rate: <span>{winRate}{totalRounds > 0 ? '%' : ''}</span></span>
-                    </div>
-                </div>
-            </div>
-
-            {/* Log */}
-            <div className='multi-trader__log'>
-                <h2>📋 Bot Log</h2>
-                <div className='multi-trader__log-output'>
-                    {logs.map(entry => (
-                        <div key={entry.id} className={`multi-trader__log-entry multi-trader__log-entry--${entry.type}`}>
-                            {entry.time && <span className='log-time'>| {entry.time} |</span>}
-                            <span dangerouslySetInnerHTML={{ __html: entry.message }} />
+                    <div className='multi-trader__config-grid'>
+                        <div className='multi-trader__field'>
+                            <label>Market (Symbol)</label>
+                            <select value={market} onChange={e => setMarket(e.target.value)} disabled={running}>
+                                {useStore().analysis.markets.map(group => (
+                                    <optgroup key={group.group} label={group.group}>
+                                        {group.items.map(item => (
+                                            <option key={item.value} value={item.value}>{item.label}</option>
+                                        ))}
+                                    </optgroup>
+                                ))}
+                            </select>
                         </div>
-                    ))}
+                        <div className='multi-trader__field'>
+                            <label>Base Stake ($)</label>
+                            <input type='number' value={baseStake} min={0.5} step={0.01} disabled={running} onChange={e => setBaseStake(round2(Math.max(0.5, parseFloat(e.target.value) || 0.5)))} />
+                        </div>
+                        <div className='multi-trader__field'>
+                            <label>Duration (Ticks)</label>
+                            <input type='number' value={ticks} min={5} max={10} step={1} disabled={running} onChange={e => setTicks(Math.max(5, parseInt(e.target.value) || 5))} />
+                        </div>
+                        <div className='multi-trader__field'>
+                            <label>Martingale Factor</label>
+                            <input type='number' value={martingale} min={1.1} step={0.01} disabled={running} onChange={e => setMartingale(parseFloat(e.target.value) || 2)} />
+                        </div>
+                        <div className='multi-trader__field'>
+                            <label>Take Profit ($)</label>
+                            <input type='number' value={takeProfit} min={0} step={1} disabled={running} onChange={e => setTakeProfit(parseFloat(e.target.value) || 10)} />
+                        </div>
+                        <div className='multi-trader__field'>
+                            <label>Stop Loss ($)</label>
+                            <input type='number' value={stopLoss} min={0} step={1} disabled={running} onChange={e => setStopLoss(Math.max(0, parseFloat(e.target.value) || 5))} />
+                        </div>
+                    </div>
+
+                    <div className='multi-trader__config-strategies'>
+                        <label>Active Trading Strategies</label>
+                        <div className='multi-trader__strategy-grid'>
+                            {[
+                                { id: 'highlow', label: 'High / Low', icon: '📈' },
+                                { id: 'risefall', label: 'Rise / Fall', icon: '↕️' },
+                                { id: 'evenodd', label: 'Even / Odd', icon: '🔢' },
+                                { id: 'overunder', label: 'Over / Under', icon: '🎯' },
+                                { id: 'accumulator', label: 'Accumulator', icon: '🔋' },
+                                { id: 'multiplier', label: 'Multiplier', icon: '✖️' }
+                            ].map(strat => {
+                                const isActive = tradeTypes.includes(strat.id as TradeType);
+                                return (
+                                    <div key={strat.id} 
+                                        className={`multi-trader__strategy-card ${isActive ? 'active' : ''}`}
+                                        onClick={() => {
+                                            if (running) return;
+                                            setTradeTypes(prev => 
+                                                prev.includes(strat.id as TradeType) 
+                                                    ? prev.filter(t => t !== strat.id) 
+                                                    : [...prev, strat.id as TradeType]
+                                            );
+                                        }}>
+                                        <span className='icon'>{strat.icon}</span>
+                                        <span className='label'>{strat.label}</span>
+                                        <div className='indicator'></div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                        
+                        {tradeTypes.includes('overunder') && (
+                            <div className='multi-trader__predictions-row animate-fade-in'>
+                                <div className='multi-trader__field'>
+                                    <label>Over Prediction (0-9)</label>
+                                    <input type='number' value={overPrediction} min={0} max={9} onChange={e => setOverPrediction(parseInt(e.target.value))} />
+                                </div>
+                                <div className='multi-trader__field'>
+                                    <label>Under Prediction (0-9)</label>
+                                    <input type='number' value={underPrediction} min={0} max={9} onChange={e => setUnderPrediction(parseInt(e.target.value))} />
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Control & Stats Section */}
+                <div className='multi-trader__card multi-trader__controls-card'>
+                    <div className='multi-trader__buttons-row'>
+                        <button className='multi-trader__btn multi-trader__btn--start' onClick={startBot} disabled={!isConnected || running}>▶ Start</button>
+                        <button className='multi-trader__btn multi-trader__btn--stop' onClick={stopBot} disabled={!running}>■ Stop</button>
+                        <button className='multi-trader__btn multi-trader__btn--reset' onClick={resetStats} disabled={running}>↺ Reset</button>
+                    </div>
+
+                    <div className='multi-trader__stats-display'>
+                        <div className='multi-trader__stats-grid'>
+                            <div className='multi-trader__stat-item'>
+                                <label>STAKE</label>
+                                <span>{totalStakeUsed.toFixed(2)}</span>
+                            </div>
+                            <div className='multi-trader__stat-item'>
+                                <label>PAYOUT</label>
+                                <span>{totalPayout.toFixed(2)}</span>
+                            </div>
+                            <div className='multi-trader__stat-item'>
+                                <label>TRADES</label>
+                                <span>{totalTrades}</span>
+                            </div>
+                            <div className='multi-trader__stat-item'>
+                                <label>WIN RATE</label>
+                                <span>{winRate}%</span>
+                            </div>
+                            <div className='multi-trader__stat-item'>
+                                <label>WINS</label>
+                                <span className='success'>{roundWins}</span>
+                            </div>
+                            <div className='multi-trader__stat-item'>
+                                <label>LOSSES</label>
+                                <span className='error'>{roundLosses}</span>
+                            </div>
+                        </div>
+                        <div className='multi-trader__profit-bar'>
+                            <label>TOTAL PROFIT/LOSS</label>
+                            <span className={totalProfit >= 0 ? 'success' : 'error'}>
+                                {totalProfit >= 0 ? '+' : ''}{totalProfit.toFixed(2)} USD
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Log Section (Expandable) */}
+                <div className='multi-trader__card multi-trader__log-card'>
+                    <div className='multi-trader__card-header' onClick={() => setIsLogExpanded(!isLogExpanded)} style={{ cursor: 'pointer' }}>
+                        <h2>📋 Bot Activity Log {isLogExpanded ? '▼' : '▶'}</h2>
+                        <span className='multi-trader__expand-hint'>{isLogExpanded ? 'Click to collapse' : 'Click to expand'}</span>
+                    </div>
+                    {isLogExpanded && (
+                        <div className='multi-trader__log-container'>
+                            <div className='multi-trader__log-output'>
+                                {logs.map(entry => (
+                                    <div key={entry.id} className={`multi-trader__log-entry multi-trader__log-entry--${entry.type}`}>
+                                        {entry.time && <span className='log-time'>[{entry.time}]</span>}
+                                        <span dangerouslySetInnerHTML={{ __html: entry.message }} />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                {/* Transactions Section */}
+                <div className='multi-trader__card multi-trader__transactions-card'>
+                    <div className='multi-trader__card-header'>
+                        <h2>🔄 Recent Transactions</h2>
+                    </div>
+                    <div className='multi-trader__transactions-list'>
+                        <div className='multi-trader__transactions-header'>
+                            <span>Type</span>
+                            <span>Spots</span>
+                            <span>Buy</span>
+                            <span>P/L</span>
+                        </div>
+                        <div className='multi-trader__transactions-scroll'>
+                            {transactions.map(tx => (
+                                <div key={tx.id} className='multi-trader__transactions-row'>
+                                    <span>{tx.type}</span>
+                                    <span className='spots'>{tx.entry} → {tx.exit}</span>
+                                    <span>{tx.buy_price.toFixed(2)}</span>
+                                    <span className={tx.profit >= 0 ? 'success' : 'error'}>
+                                        {tx.profit >= 0 ? '+' : ''}{tx.profit.toFixed(2)}
+                                    </span>
+                                </div>
+                            ))}
+                            {transactions.length === 0 && <div className='multi-trader__empty'>No recent transactions</div>}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
