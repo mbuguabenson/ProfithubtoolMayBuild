@@ -29,7 +29,7 @@ export const domain_app_ids = {
     'dbot.deriv.be': APP_IDS.PRODUCTION_BE,
     'dbot.deriv.me': APP_IDS.PRODUCTION_ME,
     '22-dec.vercel.app': APP_IDS.VERCEL,
-    'profithubtool.vercel.app': '121856',
+    'profithubtool.vercel.app': '33hCbJ8QWyfpVny8Mu4ZU',
     'www.profithub.co.ke': '33hCbJ8QWyfpVny8Mu4ZU',
     'profithub.co.ke': '33hCbJ8QWyfpVny8Mu4ZU',
 };
@@ -164,10 +164,10 @@ export const generateOAuthURL = async () => {
         const is_local = isLocal();
         const app_id = is_local ? APP_IDS.LOCALHOST : '33hCbJ8QWyfpVny8Mu4ZU';
         
-        // Use exact registered URL for production, dynamic for local
+        // Use exact origin for production (no trailing slash), dynamic for local
         const redirect_uri = is_local 
             ? encodeURIComponent(`${window.location.origin}/`)
-            : encodeURIComponent('https://profithub.co.ke');
+            : encodeURIComponent(window.location.origin.replace(/\/$/, ''));
         
         const state = Math.random().toString(36).substring(2, 15);
         
