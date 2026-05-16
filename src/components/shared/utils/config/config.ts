@@ -30,8 +30,8 @@ export const domain_app_ids = {
     'dbot.deriv.me': APP_IDS.PRODUCTION_ME,
     '22-dec.vercel.app': APP_IDS.VERCEL,
     'profithubtool.vercel.app': '121856',
-    'www.profithub.co.ke': '339HOj603saB86gvOX9hY',
-    'profithub.co.ke': '339HOj603saB86gvOX9hY',
+    'www.profithub.co.ke': '33hCbJ8QWyfpVny8Mu4ZU',
+    'profithub.co.ke': '33hCbJ8QWyfpVny8Mu4ZU',
 };
 
 export const getCurrentProductionDomain = () =>
@@ -162,7 +162,7 @@ const legacyGenerateOAuthURL = () => {
 export const generateOAuthURL = async () => {
     if (API_MODE === 'new') {
         const is_local = isLocal();
-        const app_id = is_local ? APP_IDS.LOCALHOST : '339HOj603saB86gvOX9hY';
+        const app_id = is_local ? APP_IDS.LOCALHOST : '33hCbJ8QWyfpVny8Mu4ZU';
         
         // Use exact registered URL for production, dynamic for local
         const redirect_uri = is_local 

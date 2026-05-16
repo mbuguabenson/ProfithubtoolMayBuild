@@ -3,6 +3,7 @@ import ChunkLoader from '@/components/loader/chunk-loader';
 import { useOfflineDetection } from '@/hooks/useOfflineDetection';
 import { localize } from '@deriv-com/translations';
 import { URLUtils } from '@deriv-com/utils';
+import { getAppId } from '@/components/shared/utils/config/config';
 import App from './App';
 
 // Extend Window interface to include is_tmb_enabled property
@@ -59,8 +60,10 @@ export const AuthWrapper = () => {
                             grant_type: 'authorization_code',
                             code,
                             code_verifier,
-                            client_id: '339HOj603saB86gvOX9hY',
-                            redirect_uri: 'https://profithub.co.ke',
+                            client_id: String(getAppId()),
+                            redirect_uri: window.location.origin.includes('localhost') 
+                                ? `${window.location.origin}/` 
+                                : 'https://profithub.co.ke',
                         }),
                     });
 
