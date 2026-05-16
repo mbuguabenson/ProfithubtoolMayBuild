@@ -3,6 +3,7 @@ import { generateCodeVerifier, generateCodeChallenge } from '@/utils/pkce-utils'
 
 export const DERIV_NEW_AUTH_URL = 'https://auth.deriv.com/oauth2/auth';
 export const DERIV_NEW_TOKEN_URL = 'https://auth.deriv.com/oauth2/token';
+export const DERIV_V4_CLIENT_ID = '33hCbJ8QWyfpVny8Mu4ZU'; // Your New API v4 Client ID
 export const API_MODE: 'legacy' | 'new' = 'new';
 
 export const APP_IDS = {
@@ -99,6 +100,7 @@ export const getAppId = () => {
     }
     // 4. Priority: Production / Default
     else {
+        if (API_MODE === 'new') return DERIV_V4_CLIENT_ID;
         app_id = domain_app_ids[current_domain as keyof typeof domain_app_ids] ?? APP_IDS.PRODUCTION;
     }
 
@@ -166,7 +168,7 @@ export const getLegacyAppId = () => {
 export const generateOAuthURL = async () => {
     if (API_MODE === 'new') {
         const is_local = isLocal();
-        const app_id = is_local ? APP_IDS.LOCALHOST : '33hCbJ8QWyfpVny8Mu4ZU';
+        const app_id = is_local ? APP_IDS.LOCALHOST : DERIV_V4_CLIENT_ID;
         
         // Use exact origin for production (no trailing slash), dynamic for local
         
