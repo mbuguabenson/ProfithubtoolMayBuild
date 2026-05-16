@@ -162,8 +162,12 @@ export const generateOAuthURL = async () => {
     if (API_MODE === 'new') {
         const is_local = isLocal();
         const app_id = is_local ? APP_IDS.LOCALHOST : '339HOj603saB86gvOX9hY';
-        const redirect_uri = encodeURIComponent(`${window.location.origin}/`);
-        // New v4 Auth URL with correct client_id and redirect_uri
+        // Use exact registered URL for production, dynamic for local
+        const redirect_uri = is_local 
+            ? encodeURIComponent(`${window.location.origin}/`)
+            : encodeURIComponent('https://profithub.co.ke');
+            
+        // New v4 Auth URL with correct client_id and exact redirect_uri
         return `https://auth.deriv.com/oauth2/auth?client_id=${app_id}&brand=deriv&redirect_uri=${redirect_uri}&response_type=code`;
     }
     return legacyGenerateOAuthURL();
