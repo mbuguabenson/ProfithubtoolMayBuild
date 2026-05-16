@@ -162,8 +162,8 @@ export const generateOAuthURL = async () => {
     if (API_MODE === 'new') {
         const is_local = isLocal();
         const app_id = is_local ? APP_IDS.LOCALHOST : '339HOj603saB86gvOX9hY';
-        // New OIDC-based Auth URL
-        return `https://auth.deriv.com/oauth2/auth?app_id=${app_id}&brand=deriv&redirect=home`;
+        // New v4 Auth URL with correct client_id parameter
+        return `https://auth.deriv.com/oauth2/auth?client_id=${app_id}&brand=deriv&redirect=home&response_type=code`;
     }
     return legacyGenerateOAuthURL();
 };
