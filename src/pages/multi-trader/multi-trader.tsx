@@ -390,9 +390,6 @@ const MultiTrader: React.FC = observer(() => {
     const isConnected = status === 'connected';
     const winRate = totalRounds > 0 ? ((roundWins / totalRounds) * 100).toFixed(1) : '--';
 
-    const toggleTradeType = (type: TradeType) => {
-        setTradeTypes(prev => prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]);
-    };
 
     // ── Render ────────────────────────────────────────────────────────────────
 
