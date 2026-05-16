@@ -1,4 +1,4 @@
-import { getAppId, getSocketURL, API_MODE, getLegacyAppId } from '@/components/shared';
+import { getAppId, getSocketURL } from '@/components/shared';
 import { website_name } from '@/utils/site-config';
 import DerivAPIBasic from '@deriv/deriv-api/dist/DerivAPIBasic';
 import { getInitialLanguage } from '@deriv-com/translations';
@@ -6,7 +6,8 @@ import APIMiddleware from './api-middleware';
 
 export const generateDerivApiInstance = () => {
     const cleanedServer = getSocketURL().replace(/[^a-zA-Z0-9.]/g, '');
-    const socket_url = `wss://${cleanedServer}/websockets/v3?app_id=${getLegacyAppId()}&l=${getInitialLanguage()}&brand=${website_name.toLowerCase()}`;
+    const cleanedAppId = getAppId()?.replace?.(/[^a-zA-Z0-9]/g, '') ?? getAppId();
+    const socket_url = `wss://${cleanedServer}/websockets/v3?app_id=${cleanedAppId}&l=${getInitialLanguage()}&brand=${website_name.toLowerCase()}`;
 
     window.debugSocketUrl = socket_url;
     const deriv_socket = new WebSocket(socket_url);
@@ -18,27 +19,18 @@ export const generateDerivApiInstance = () => {
 };
 
 export const getLoginId = () => {
-    if (API_MODE === 'new') {
-        return localStorage.getItem('new_api_account_id');
-    }
     const login_id = localStorage.getItem('active_loginid');
     if (login_id && login_id !== 'null') return login_id;
     return null;
 };
 
 export const V2GetActiveToken = () => {
-    if (API_MODE === 'new') {
-        return localStorage.getItem('new_api_access_token');
-    }
     const token = localStorage.getItem('authToken');
     if (token && token !== 'null') return token;
     return null;
 };
 
 export const V2GetActiveClientId = () => {
-    if (API_MODE === 'new') {
-        return localStorage.getItem('new_api_account_id');
-    }
     const token = V2GetActiveToken();
 
     if (!token) return null;

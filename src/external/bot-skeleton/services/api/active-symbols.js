@@ -56,37 +56,35 @@ export default class ActiveSymbols {
 
     processActiveSymbols() {
         return this.active_symbols.reduce((processed_symbols, symbol) => {
-            const sym_name = symbol.underlying_symbol || symbol.symbol;
-            const mkt_name = symbol.market_name || symbol.market;
-            const sub_name = symbol.submarket_name || symbol.submarket;
-
             if (
-                config().DISABLED_SYMBOLS.includes(sym_name) ||
-                config().DISABLED_SUBMARKETS.includes(sub_name)
+                config().DISABLED_SYMBOLS.includes(symbol.symbol) ||
+                config().DISABLED_SUBMARKETS.includes(symbol.submarket)
             ) {
                 return processed_symbols;
             }
 
-            if (!processed_symbols[mkt_name]) {
-                processed_symbols[mkt_name] = {
-                    display_name: symbol.market_display_name || symbol.display_name,
+            const isExistingValue = (object, prop) => Object.keys(object).findIndex(a => a === symbol[prop]) !== -1;
+
+            if (!isExistingValue(processed_symbols, 'market')) {
+                processed_symbols[symbol.market] = {
+                    display_name: symbol.market_display_name,
                     submarkets: {},
                 };
             }
 
-            const { submarkets } = processed_symbols[mkt_name];
+            const { submarkets } = processed_symbols[symbol.market];
 
-            if (!submarkets[sub_name]) {
-                submarkets[sub_name] = {
-                    display_name: symbol.submarket_display_name || symbol.display_name,
+            if (!isExistingValue(submarkets, 'submarket')) {
+                submarkets[symbol.submarket] = {
+                    display_name: symbol.submarket_display_name,
                     symbols: {},
                 };
             }
 
-            const { symbols } = submarkets[sub_name];
+            const { symbols } = submarkets[symbol.submarket];
 
-            if (!symbols[sym_name]) {
-                symbols[sym_name] = {
+            if (!isExistingValue(symbols, 'symbol')) {
+                symbols[symbol.symbol] = {
                     display_name: symbol.display_name,
                     pip_size: `${symbol.pip}`.length - 2,
                     is_active: !symbol.is_trading_suspended && symbol.exchange_is_open,
@@ -281,13 +279,11 @@ export default class ActiveSymbols {
     }
 
     isSymbolClosed(symbol_name) {
-        return this.active_symbols.some(active_symbol => {
-            const sym = active_symbol.underlying_symbol || active_symbol.symbol;
-            return (
-                sym === symbol_name &&
+        return this.active_symbols.some(
+            active_symbol =>
+                active_symbol.symbol === symbol_name &&
                 (!active_symbol.exchange_is_open || active_symbol.is_trading_suspended)
-            );
-        });
+        );
     }
 
     sortDropdownOptions = (dropdown_options, closedFunc) => {

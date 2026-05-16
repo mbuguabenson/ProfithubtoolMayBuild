@@ -1,9 +1,7 @@
 import { isStaging } from '../url/helpers';
-import { generateCodeVerifier, generateCodeChallenge } from '@/utils/pkce-utils';
 
 export const DERIV_NEW_AUTH_URL = 'https://auth.deriv.com/oauth2/auth';
 export const DERIV_NEW_TOKEN_URL = 'https://auth.deriv.com/oauth2/token';
-export const DERIV_V4_CLIENT_ID = '33hCbJ8QWyfpVny8Mu4ZU'; // Your New API v4 Client ID
 export const API_MODE: 'legacy' | 'new' = 'new';
 
 export const APP_IDS = {
@@ -30,9 +28,9 @@ export const domain_app_ids = {
     'dbot.deriv.be': APP_IDS.PRODUCTION_BE,
     'dbot.deriv.me': APP_IDS.PRODUCTION_ME,
     '22-dec.vercel.app': APP_IDS.VERCEL,
-    'profithubtool.vercel.app': '33hCbJ8QWyfpVny8Mu4ZU',
-    'www.profithub.co.ke': '33hCbJ8QWyfpVny8Mu4ZU',
-    'profithub.co.ke': '33hCbJ8QWyfpVny8Mu4ZU',
+    'profithubtool.vercel.app': '121856',
+    'www.profithub.co.ke': '339HOj603saB86gvOX9hY',
+    'profithub.co.ke': '339HOj603saB86gvOX9hY',
 };
 
 export const getCurrentProductionDomain = () =>
@@ -100,7 +98,6 @@ export const getAppId = () => {
     }
     // 4. Priority: Production / Default
     else {
-        if (API_MODE === 'new') return DERIV_V4_CLIENT_ID;
         app_id = domain_app_ids[current_domain as keyof typeof domain_app_ids] ?? APP_IDS.PRODUCTION;
     }
 
@@ -161,76 +158,20 @@ const legacyGenerateOAuthURL = () => {
     return login_url;
 };
 
-/**
- * Generates a cryptographically secure CSRF token
- * @returns A random base64url-encoded string
- */
-export const generateCSRFToken = (): string => {
-    const array = new Uint8Array(32);
-    crypto.getRandomValues(array);
-    const base64 = btoa(String.fromCharCode(...array));
-    return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-};
-
-/**
- * Validates CSRF token from OAuth callback
- * @param token The token to validate
- * @returns true if token is valid and not expired
- */
-export const validateCSRFToken = (token: string): boolean => {
-    const storedToken = localStorage.getItem('oauth_csrf_token');
-    const timestamp = localStorage.getItem('oauth_csrf_token_timestamp');
-
-    if (!storedToken || !timestamp || storedToken !== token) {
-        return false;
-    }
-
-    // Check if token is expired (10 minutes = 600000ms)
-    const tokenAge = Date.now() - parseInt(timestamp, 10);
-    return tokenAge <= 600000;
-};
-
-/**
- * Clears CSRF token from localStorage after successful validation
- */
-export const clearCSRFToken = (): void => {
-    localStorage.removeItem('oauth_csrf_token');
-    localStorage.removeItem('oauth_csrf_token_timestamp');
-};
-
-export const getLegacyAppId = () => {
-    return isLocal() ? APP_IDS.LOCALHOST : '121856';
-};
-
 export const generateOAuthURL = async () => {
     if (API_MODE === 'new') {
         const is_local = isLocal();
-        const app_id = is_local ? APP_IDS.LOCALHOST : DERIV_V4_CLIENT_ID;
+        const app_id = is_local ? APP_IDS.LOCALHOST : '339HOj603saB86gvOX9hY';
+        // Use exact registered URL for production, dynamic for local
+        const redirect_uri = is_local 
+            ? encodeURIComponent(`${window.location.origin}/`)
+            : encodeURIComponent('https://profithub.co.ke');
         
-        // CSRF Protection
-        const state = generateCSRFToken();
-        localStorage.setItem('oauth_csrf_token', state);
-        localStorage.setItem('oauth_csrf_token_timestamp', Date.now().toString());
-        
-        // PKCE Flow
-        const code_verifier = generateCodeVerifier();
-        console.log('[Config] Generated new code_verifier, saving to localStorage');
-        localStorage.setItem('code_verifier', code_verifier);
-        const code_challenge = await generateCodeChallenge(code_verifier);
+        // Generate random state (at least 8 characters) for security
+        const state = Math.random().toString(36).substring(2, 15);
             
-        // New v4 Auth URL with PKCE - Cleaned and fully encoded
-        const auth_url = new URL('https://auth.deriv.com/oauth2/auth');
-        auth_url.searchParams.set('client_id', String(app_id));
-        auth_url.searchParams.set('redirect_uri', is_local ? `${window.location.origin}/` : 'https://profithub.co.ke');
-        auth_url.searchParams.set('response_type', 'code');
-        auth_url.searchParams.set('scope', 'trade');
-        auth_url.searchParams.set('state', state);
-        auth_url.searchParams.set('code_challenge', code_challenge);
-        auth_url.searchParams.set('code_challenge_method', 'S256');
-            
-        const final_url = auth_url.toString();
-        console.log('[Config] Generated New OAuth URL:', final_url);
-        return final_url;
+        // New v4 Auth URL with correct client_id, redirect_uri, and state
+        return `https://auth.deriv.com/oauth2/auth?client_id=${app_id}&brand=deriv&redirect_uri=${redirect_uri}&response_type=code&state=${state}`;
     }
     return legacyGenerateOAuthURL();
 };

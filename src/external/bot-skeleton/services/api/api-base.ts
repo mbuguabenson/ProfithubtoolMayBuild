@@ -157,7 +157,7 @@ class APIBase {
 
         // 1. Initialize Public WS (Market Data)
         if (!this.publicApi || force_create_connection) {
-            const socket_url = 'wss://api.derivws.com/trading/v1/options/ws/public';
+            const socket_url = `wss://api.derivws.com/trading/v1/options/ws/public?app_id=${getAppId()}`;
             const deriv_socket = new WebSocket(socket_url);
             this.publicApi = this.wrapSocket(deriv_socket);
 
