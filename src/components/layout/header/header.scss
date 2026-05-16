@@ -12,75 +12,17 @@
     &__menu {
         svg > path,
         svg > g > path {
-            fill: #fff !important; // Enforce white visibility
+            fill: var(--text-prominent);
         }
     }
 
     position: sticky;
     top: 0;
-    z-index: 1000; // Increased to ensure it's above the run panel (z-index: 5)
-    background: var(--general-main-1) !important; // Restored to initial color
-    backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgb(255 255 255 / 5%);
+    z-index: 1000;
+    background: var(--general-main-1);
+    border-bottom: 1px solid var(--border-divider);
     height: 6rem;
     padding: 0 1.6rem;
-
-    &__whatsapp {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-right: 1.2rem;
-        padding: 0.4rem;
-        border-radius: 50%;
-        transition: all 0.2s ease;
-
-        &:hover {
-            background-color: var(--general-section-1);
-            transform: scale(1.1);
-        }
-
-        &-icon {
-            fill: #25d366;
-            width: 2rem;
-            height: 2rem;
-            filter: drop-shadow(0 0 2px rgb(37 211 102 / 30%));
-        }
-    }
-
-    .header-branding {
-        display: flex;
-        align-items: center;
-        gap: 1.2rem;
-        margin-right: 2.4rem;
-        cursor: pointer;
-        transition: transform 0.2s ease;
-
-        &:hover {
-            transform: translateY(-1px);
-
-            .brand-logo {
-                box-shadow: 0 6px 20px rgb(255 68 79 / 40%);
-
-                .logo-glow {
-                    opacity: 1;
-                }
-            }
-        }
-
-        .brand-logo-img {
-            width: 48px;
-            height: 48px;
-            object-fit: contain;
-            filter: drop-shadow(0 0 15px rgb(124 58 237 / 50%));
-            transition: all 0.3s ease;
-
-            &:hover {
-                transform: scale(1.05);
-                filter: drop-shadow(0 0 20px rgb(124 58 237 / 70%));
-            }
-        }
-    }
 }
 
 .account-switcher {
@@ -366,76 +308,6 @@
 
 .deriv-accordion--underline {
     border-bottom: none;
-}
-
-/* Header Balance Style */
-.header-balance {
-    position: relative;
-    display: flex;
-    align-items: center;
-    padding: 0.6rem 2rem;
-    margin-right: 1.6rem;
-    background: rgb(255 255 255 / 3%);
-    border: 1px solid rgb(255 255 255 / 8%);
-    border-radius: 12px;
-    font-family: var(--font-display);
-    transition: all 0.3s ease;
-    overflow: hidden;
-
-    &:hover {
-        background: rgb(255 255 255 / 5%);
-        border-color: rgb(255 255 255 / 15%);
-        transform: translateY(-1px);
-
-        .header-balance__glow {
-            opacity: 0.6;
-        }
-    }
-
-    &__info {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        line-height: 1.1;
-        z-index: 1;
-    }
-
-    &__amount {
-        font-size: 1.8rem;
-        font-weight: 800;
-        color: var(--text-prominent);
-        letter-spacing: -0.01em;
-    }
-
-    &__currency {
-        font-size: 0.9rem;
-        font-weight: 600;
-        color: var(--brand-red-coral);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        opacity: 0.8;
-    }
-
-    &__glow {
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle at center, rgb(255 68 79 / 10%) 0%, transparent 70%);
-        opacity: 0.3;
-        pointer-events: none;
-        transition: opacity 0.5s ease;
-    }
-
-    @include mobile-or-tablet-screen {
-        padding: 0.4rem 1.2rem;
-        margin-right: 0.8rem;
-
-        &__amount {
-            font-size: 1.4rem;
-        }
-    }
 }
 
 @keyframes logo-glow-pulse {

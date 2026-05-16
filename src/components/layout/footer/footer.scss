@@ -11,11 +11,10 @@
     bottom: 0;
     right: 0;
     left: 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: 1px solid var(--general-section-1);
+    box-shadow: 0 1px 0 0 var(--general-section-1) inset;
     background: var(--general-main-1);
-    backdrop-filter: blur(10px);
-    z-index: 1000; // Above workspace but below dialogs
-    transition: all 0.3s ease;
+    z-index: 2;
 
     @include mobile-or-tablet-screen {
         height: 4.8rem;
