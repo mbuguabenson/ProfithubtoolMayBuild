@@ -18,7 +18,8 @@ const ManualTrader: React.FC = observer(() => {
 
     useEffect(() => {
         const handleIframeMessage = (event: MessageEvent) => {
-            if (event.origin !== new URL(DTRADER_URL).origin) return;
+            // Security: Only trust your own domain
+            if (!event.origin.includes('profithub.co.ke')) return;
 
             if (event.data?.type === 'DTRADER_READY') {
                 const accountsList = JSON.parse(localStorage.getItem('accountsList') || '{}');
