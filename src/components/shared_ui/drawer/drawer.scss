@@ -54,17 +54,22 @@
     }
 
     &__content {
+        display: flex;
+        flex-direction: column;
         flex-grow: 1;
-        overflow: auto;
+        overflow: hidden;
+        min-height: 0;
     }
 
     &__footer {
+        display: flex;
         background-color: var(--general-main-2);
         border-top: 1px solid var(--general-section-1);
         line-height: 40px;
         font-weight: 700;
         font-size: 1.6em;
         align-items: center;
+        justify-content: center;
     }
 
     &__toggle {

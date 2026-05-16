@@ -7,7 +7,7 @@
     height: 0;
 
     &__container {
-        height: 100% !important;
+        height: 100vh !important;
         top: 0 !important;
         width: 36.6rem !important;
         right: 0;
@@ -57,11 +57,13 @@
     }
 
     &__stat {
-        @include flex-center(flex-start, flex-end);
+        @include flex-center(flex-start, center);
 
         flex-direction: column;
-        width: 35rem;
+        width: 100%;
         background-color: var(--general-section-2);
+        padding: 0 1.6rem 0.8rem;
+        margin-top: auto;
 
         @include mobile-or-tablet-screen {
             margin: 0;
@@ -77,7 +79,7 @@
             @include flex-center(center, flex-start);
 
             width: 33%;
-            padding: 16px 0 2px;
+            padding: 8px 0 2px;
             cursor: pointer;
             color: var(--text-general);
             -webkit-tap-highlight-color: transparent;
@@ -91,7 +93,7 @@
         &--tiles {
             width: 100%;
             display: grid;
-            grid-template: 64px 64px / 1fr 1fr 1fr;
+            grid-template: 54px 54px / 1fr 1fr 1fr;
         }
 
         &-amount {
@@ -116,25 +118,34 @@
 
     &__footer {
         text-align: center;
-
         @include flex-center(space-between);
-
         flex-direction: column;
+        padding-bottom: 4.8rem;
 
         &-button {
             width: 318px;
             height: 32px !important;
-            margin: 12px 24px;
+            margin: 8px 24px;
         }
     }
 
     &__content {
         display: flex;
-        justify-content: space-between;
         flex-direction: column;
-        overflow: hidden !important;
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+        min-height: 0;
 
         .dc-tabs {
+            flex-grow: 1;
+            min-height: 0;
+
+            &__content {
+                height: 100%;
+                overflow: hidden;
+            }
+
             &__item {
                 overflow: hidden;
                 text-overflow: ellipsis;
@@ -153,7 +164,7 @@
 
     &-tab {
         &__content {
-            height: calc(100vh - 22rem);
+            height: 100%;
             overflow-y: auto;
 
             &--no-stat {
@@ -211,10 +222,12 @@
         transform: scale(1) rotate(0deg);
         filter: drop-shadow(0 0 0px rgba(124, 58, 237, 0.6));
     }
+
     50% {
         transform: scale(1.2) rotate(-5deg);
         filter: drop-shadow(0 0 5px #ffa500);
     }
+
     100% {
         transform: scale(1) rotate(0deg);
         filter: drop-shadow(0 0 0px #ffa500);
@@ -482,4 +495,3 @@
         }
     }
 }
-

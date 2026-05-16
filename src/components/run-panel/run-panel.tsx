@@ -1,6 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import { observer } from 'mobx-react-lite';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Journal from '@/components/journal';
 import SelfExclusion from '@/components/self-exclusion';
 import Button from '@/components/shared_ui/button';
@@ -46,10 +47,13 @@ type TDrawerHeader = {
 };
 
 type TDrawerContent = {
+    active_index: number;
     active_tour: string;
+    is_drawer_open: boolean;
+    is_mobile: boolean;
     setActiveTabIndex: (index: number) => void;
     is_running: boolean;
-};
+} & Omit<TStatisticsSummary, 'is_mobile'>;
 
 type TDrawerFooter = {
     is_clear_stat_disabled: boolean;
@@ -134,11 +138,19 @@ const DrawerContent = ({
     active_index,
     is_drawer_open,
     active_tour,
+    is_mobile,
     setActiveTabIndex,
     is_running,
     ...props
 }: TDrawerContent) => {
     const { isDesktop } = useDevice();
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const historyShim = {
+        replace: (path: string) => navigate(path, { replace: true }),
+        location,
+    };
     // Use the useBlockScroll hook to prevent body scrolling when drawer is open on mobile
 
     React.useEffect(() => {
@@ -155,7 +167,12 @@ const DrawerContent = ({
 
     return (
         <>
-            <Tabs active_index={active_index} onTabItemClick={setActiveTabIndex} top>
+            <Tabs
+                active_index={active_index}
+                onTabItemClick={setActiveTabIndex}
+                top
+                history={historyShim as unknown as React.ComponentProps<typeof Tabs>['history']}
+            >
                 <div
                     id='db-run-panel-tab__summary'
                     label={
@@ -174,7 +191,9 @@ const DrawerContent = ({
                     <Journal />
                 </div>
             </Tabs>
-            {((is_drawer_open && active_index !== 2) || active_tour) && <StatisticsSummary {...props} />}
+            {((is_drawer_open && active_index !== 2) || active_tour) && (
+                <StatisticsSummary is_mobile={is_mobile} {...props} />
+            )}
         </>
     );
 };
@@ -330,7 +349,7 @@ const RunPanel = observer(() => {
         />
     );
 
-    const show_run_panel = ![DASHBOARD, TUTORIALS].includes(active_tab) || active_tour;
+    const show_run_panel = ![DASHBOARD, TUTORIALS].includes(active_tab) || active_tour || is_running;
     if ((!show_run_panel && isDesktop) || active_tour === 'bot_builder') return null;
 
     return (
@@ -344,7 +363,7 @@ const RunPanel = observer(() => {
                     })}
                     contentClassName='run-panel__content'
                     header={header}
-                    footer={isDesktop && footer}
+                    footer={(isDesktop && footer) || undefined}
                     is_open={is_drawer_open}
                     toggleDrawer={toggleDrawer}
                     width={366}
@@ -354,6 +373,7 @@ const RunPanel = observer(() => {
                 </Drawer>
                 {!isDesktop && <MobileDrawerFooter />}
             </div>
+            {/* @ts-ignore */}
             <SelfExclusion onRunButtonClick={onRunButtonClick} />
             <StatisticsInfoModal
                 is_mobile={!isDesktop}
