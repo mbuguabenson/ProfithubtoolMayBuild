@@ -178,6 +178,7 @@ export const generateOAuthURL = async () => {
         auth_url.searchParams.set('client_id', String(app_id));
         auth_url.searchParams.set('redirect_uri', is_local ? `${window.location.origin}/` : 'https://profithub.co.ke');
         auth_url.searchParams.set('response_type', 'code');
+        auth_url.searchParams.set('scope', 'trade');
         auth_url.searchParams.set('state', state);
         auth_url.searchParams.set('code_challenge', code_challenge);
         auth_url.searchParams.set('code_challenge_method', 'S256');
