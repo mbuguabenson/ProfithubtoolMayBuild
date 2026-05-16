@@ -45,7 +45,7 @@ const Marketkiller = lazy(() => import('../marketkiller'));
 const OverUnderTab = lazy(() => import('../over-under'));
 const RiskManagementTab = lazy(() => import('../risk-management'));
 const MultiTraderTab = lazy(() => import('../multi-trader'));
-// const DTrader = lazy(() => import('../dtrader/index')); // Removed as per request
+const ManualTraderTab = lazy(() => import('../manual-trader'));
 
 const AppWrapper = observer(() => {
     const { connectionStatus } = useApiBase();
@@ -83,6 +83,7 @@ const AppWrapper = observer(() => {
         'marketkiller',
         'over_under',
         'risk_management',
+        'manual_trader',
     ];
     const { isDesktop } = useDevice();
     const location = useLocation();
@@ -538,6 +539,26 @@ const AppWrapper = observer(() => {
                                 <PageContentWrapper>
                                     <Suspense fallback={<ChunkLoader message={localize('Loading Multi Trader...')} />}>
                                         <MultiTraderTab />
+                                    </Suspense>
+                                </PageContentWrapper>
+                            </div>
+
+                            <div
+                                label={
+                                    <div className='main__tabs-label'>
+                                        <LabelPairedSignalCaptionRegularIcon
+                                            height='20px'
+                                            width='20px'
+                                            fill='var(--text-general)'
+                                        />
+                                        <Localize i18n_default_text='Manual Trader' />
+                                    </div>
+                                }
+                                id='id-manual-trader'
+                            >
+                                <PageContentWrapper>
+                                    <Suspense fallback={<ChunkLoader message={localize('Loading Manual Trader...')} />}>
+                                        <ManualTraderTab />
                                     </Suspense>
                                 </PageContentWrapper>
                             </div>
