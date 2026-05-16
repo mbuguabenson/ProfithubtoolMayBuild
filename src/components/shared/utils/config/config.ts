@@ -1,4 +1,5 @@
 import { isStaging } from '../url/helpers';
+import { generateCodeVerifier, generateCodeChallenge } from '@/utils/pkce-utils';
 
 export const DERIV_NEW_AUTH_URL = 'https://auth.deriv.com/oauth2/auth';
 export const DERIV_NEW_TOKEN_URL = 'https://auth.deriv.com/oauth2/token';
@@ -162,16 +163,21 @@ export const generateOAuthURL = async () => {
     if (API_MODE === 'new') {
         const is_local = isLocal();
         const app_id = is_local ? APP_IDS.LOCALHOST : '339HOj603saB86gvOX9hY';
+        
         // Use exact registered URL for production, dynamic for local
         const redirect_uri = is_local 
             ? encodeURIComponent(`${window.location.origin}/`)
             : encodeURIComponent('https://profithub.co.ke');
         
-        // Generate random state (at least 8 characters) for security
         const state = Math.random().toString(36).substring(2, 15);
+        
+        // PKCE Flow
+        const code_verifier = generateCodeVerifier();
+        localStorage.setItem('code_verifier', code_verifier);
+        const code_challenge = await generateCodeChallenge(code_verifier);
             
-        // New v4 Auth URL with correct client_id, redirect_uri, and state
-        return `https://auth.deriv.com/oauth2/auth?client_id=${app_id}&brand=deriv&redirect_uri=${redirect_uri}&response_type=code&state=${state}`;
+        // New v4 Auth URL with PKCE
+        return `https://auth.deriv.com/oauth2/auth?client_id=${app_id}&brand=deriv&redirect_uri=${redirect_uri}&response_type=code&state=${state}&code_challenge=${code_challenge}&code_challenge_method=S256`;
     }
     return legacyGenerateOAuthURL();
 };
