@@ -162,8 +162,9 @@ export const generateOAuthURL = async () => {
     if (API_MODE === 'new') {
         const is_local = isLocal();
         const app_id = is_local ? APP_IDS.LOCALHOST : '339HOj603saB86gvOX9hY';
-        // New v4 Auth URL with correct client_id parameter
-        return `https://auth.deriv.com/oauth2/auth?client_id=${app_id}&brand=deriv&redirect=home&response_type=code`;
+        const redirect_uri = encodeURIComponent(`${window.location.origin}/`);
+        // New v4 Auth URL with correct client_id and redirect_uri
+        return `https://auth.deriv.com/oauth2/auth?client_id=${app_id}&brand=deriv&redirect_uri=${redirect_uri}&response_type=code`;
     }
     return legacyGenerateOAuthURL();
 };
