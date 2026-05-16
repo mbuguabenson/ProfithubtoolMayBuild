@@ -174,6 +174,7 @@ export const generateOAuthURL = async () => {
         
         // PKCE Flow
         const code_verifier = generateCodeVerifier();
+        console.log('[Config] Generated new code_verifier, saving to localStorage');
         localStorage.setItem('code_verifier', code_verifier);
         const code_challenge = await generateCodeChallenge(code_verifier);
             
@@ -187,7 +188,9 @@ export const generateOAuthURL = async () => {
         auth_url.searchParams.set('code_challenge', code_challenge);
         auth_url.searchParams.set('code_challenge_method', 'S256');
             
-        return auth_url.toString();
+        const final_url = auth_url.toString();
+        console.log('[Config] Generated New OAuth URL:', final_url);
+        return final_url;
     }
     return legacyGenerateOAuthURL();
 };

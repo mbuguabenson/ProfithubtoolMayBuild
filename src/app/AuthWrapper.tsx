@@ -50,8 +50,16 @@ export const AuthWrapper = () => {
                 const urlParams = new URLSearchParams(window.location.search);
                 const code = urlParams.get('code');
                 const code_verifier = localStorage.getItem('code_verifier');
+                if (code) {
+                    if (!code_verifier) {
+                        console.error('[Auth] Authorization code found but code_verifier is MISSING from localStorage!');
+                        console.warn('[Auth] This usually happens if you start login on www.profithub.co.ke but redirect to profithub.co.ke. Please ensure you are on the correct domain.');
+                        // Cleanup URL anyway so we don't keep trying
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                        setIsAuthComplete(true);
+                        return;
+                    }
 
-                if (code && code_verifier) {
                     console.log('[Auth] Detected authorization code, exchanging for tokens...');
                     const response = await fetch('https://auth.deriv.com/oauth2/token', {
                         method: 'POST',
