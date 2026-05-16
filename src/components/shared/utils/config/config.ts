@@ -176,8 +176,16 @@ export const generateOAuthURL = async () => {
         localStorage.setItem('code_verifier', code_verifier);
         const code_challenge = await generateCodeChallenge(code_verifier);
             
-        // New v4 Auth URL with PKCE
-        return `https://auth.deriv.com/oauth2/auth?client_id=${app_id}&brand=deriv&redirect_uri=${redirect_uri}&response_type=code&state=${state}&code_challenge=${code_challenge}&code_challenge_method=S256`;
+        // New v4 Auth URL with PKCE - Cleaned and fully encoded
+        const auth_url = new URL('https://auth.deriv.com/oauth2/auth');
+        auth_url.searchParams.set('client_id', app_id);
+        auth_url.searchParams.set('redirect_uri', is_local ? `${window.location.origin}/` : 'https://profithub.co.ke');
+        auth_url.searchParams.set('response_type', 'code');
+        auth_url.searchParams.set('state', state);
+        auth_url.searchParams.set('code_challenge', code_challenge);
+        auth_url.searchParams.set('code_challenge_method', 'S256');
+            
+        return auth_url.toString();
     }
     return legacyGenerateOAuthURL();
 };
