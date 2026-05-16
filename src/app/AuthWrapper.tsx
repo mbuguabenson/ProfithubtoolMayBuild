@@ -63,7 +63,10 @@ export const AuthWrapper = () => {
                     console.log('[Auth] Detected authorization code, exchanging for tokens...');
                     const response = await fetch('https://auth.deriv.com/oauth2/token', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        headers: { 
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'Deriv-App-ID': String(getAppId()),
+                        },
                         body: new URLSearchParams({
                             grant_type: 'authorization_code',
                             code,
