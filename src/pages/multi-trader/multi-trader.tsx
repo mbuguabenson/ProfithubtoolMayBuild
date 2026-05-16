@@ -1,13 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useStore } from '@/hooks/useStore';
 import { observer } from 'mobx-react-lite';
-import { getAppId, getSocketURL } from '@/components/shared/utils/config/config';
+import { api_base } from '@/external/bot-skeleton';
 import './multi-trader.scss';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 type TradeType = 'highlow' | 'risefall' | 'evenodd' | 'overunder' | 'accumulator' | 'multiplier';
-type StatusVariant = 'connected' | 'disconnected' | 'connecting';
 
 interface TradeConfig {
     proposal: number;
@@ -50,12 +49,6 @@ interface TradeResult {
     stakeUsed: number;
     transaction: Transaction;
 }
-
-// ─── Constants ───────────────────────────────────────────────────────────────
-
-const APP_ID = getAppId();
-const SERVER_URL = getSocketURL();
-const WS_URL = `wss://${SERVER_URL}/websockets/v3?app_id=${APP_ID}`;
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -108,10 +101,9 @@ function getTradeConfigs(type: TradeType, stake: number, ticks: number, predicti
 // ─── Component ───────────────────────────────────────────────────────────────
 
 const MultiTrader: React.FC = observer(() => {
-    const { client } = useStore();
-    // Connection
-    const [status, setStatus] = useState<StatusVariant>('disconnected');
-    const wsRef = useRef<WebSocket | null>(null);
+    const { client, analysis } = useStore();
+    // Bot state
+    const [running,  setRunning]  = useState(false);
     const reqCounter = useRef(1);
     const resolvers   = useRef<Map<number, { resolve: (d: any) => void; reject: (e: any) => void; isSubscription?: boolean }>>(new Map());
 
@@ -122,10 +114,9 @@ const MultiTrader: React.FC = observer(() => {
     const [martingale, setMartingale] = useState(2.0);
     const [takeProfit, setTakeProfit] = useState(10);
     const [stopLoss,   setStopLoss]   = useState(5);
-    const [tradeTypes, setTradeTypes] = useState<TradeType[]>(['highlow']);
+    const [tradeTypes, setTradeTypes] = useState<TradeType[]>(['risefall']);
 
     // State
-    const [running,  setRunning]  = useState(false);
     const [totalProfit, setTotalProfit] = useState(0);
     const [totalRounds, setTotalRounds] = useState(0);
     const [roundWins,   setRoundWins]   = useState(0);
@@ -148,6 +139,7 @@ const MultiTrader: React.FC = observer(() => {
     const totalTradesRef   = useRef(0);
     const strategyStakes   = useRef<Record<string, number>>({});
     const logId            = useRef(1);
+    const timerRef         = useRef<NodeJS.Timeout | null>(null);
 
     // ── Logging ──────────────────────────────────────────────────────────────
 
@@ -165,17 +157,16 @@ const MultiTrader: React.FC = observer(() => {
 
     const sendJSON = useCallback((obj: Record<string, any>): Promise<any> => {
         return new Promise((resolve, reject) => {
-            if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
-                return reject('WebSocket not open');
+            if (!api_base.api) {
+                return reject('API not initialized');
             }
             const req_id = reqCounter.current++;
             resolvers.current.set(req_id, { resolve, reject });
-            wsRef.current.send(JSON.stringify({ ...obj, req_id }));
+            api_base.api.send({ ...obj, req_id }).catch(reject);
         });
     }, []);
 
-    const handleMessage = useCallback((raw: MessageEvent) => {
-        const data = JSON.parse(raw.data as string);
+    const handleMessage = useCallback((data: any) => {
         const req_id = data.req_id;
 
         if (req_id && resolvers.current.has(req_id)) {
@@ -194,12 +185,10 @@ const MultiTrader: React.FC = observer(() => {
 
         if (data.msg_type === 'authorize') {
             if (data.error) {
-                setStatus('disconnected');
                 addLog(`Authorization failed: ${data.error.message}`, 'error');
             } else {
-                setStatus('connected');
                 addLog(`Authorized as ${data.authorize.loginid}`, 'success');
-                wsRef.current?.send(JSON.stringify({ balance: 1, subscribe: 1 }));
+                api_base.api.send({ balance: 1, subscribe: 1 });
             }
         }
         if (data.error && data.msg_type !== 'authorize') {
@@ -207,30 +196,11 @@ const MultiTrader: React.FC = observer(() => {
         }
     }, [addLog]);
 
-    const connect = useCallback(() => {
-        if (wsRef.current?.readyState === WebSocket.OPEN) return;
-        const currentToken = client.getToken();
-        if (!currentToken) { addLog('Please log in first.', 'error'); return; }
-
-        setStatus('connecting');
-
-        const ws = new WebSocket(WS_URL);
-        wsRef.current = ws;
-        ws.onopen    = () => { addLog('Connected. Authorizing…', 'info'); ws.send(JSON.stringify({ authorize: currentToken })); };
-        ws.onmessage = handleMessage;
-        ws.onclose   = () => {
-            setStatus('disconnected');
-            if (runningRef.current) { runningRef.current = false; setRunning(false); addLog('Connection lost. Bot stopped.', 'error'); }
-        };
-        ws.onerror   = () => addLog('WebSocket error — check console.', 'error');
-    }, [client, handleMessage, addLog]);
-
-    // Auto-connect on mount
     useEffect(() => {
-        if (status === 'disconnected' && client.getToken()) {
-            connect();
-        }
-    }, [client, connect, status]);
+        if (!api_base.api) return;
+        const sub = api_base.api.onMessage().subscribe(handleMessage);
+        return () => sub.unsubscribe();
+    }, [handleMessage]);
 
     // ── Strategy stakes init ──────────────────────────────────────────────────
 
@@ -274,7 +244,7 @@ const MultiTrader: React.FC = observer(() => {
                 },
                 reject,
             });
-            wsRef.current?.send(JSON.stringify({ proposal_open_contract: 1, contract_id: contractId, subscribe: 1, req_id }));
+            api_base.api.send({ proposal_open_contract: 1, contract_id: contractId, subscribe: 1, req_id }).catch(reject);
         });
     }, []);
 
@@ -285,8 +255,12 @@ const MultiTrader: React.FC = observer(() => {
         _martingale: number, _takeProfit: number, _stopLoss: number,
         _tradeTypes: TradeType[],
     ) => {
-        if (!runningRef.current || wsRef.current?.readyState !== WebSocket.OPEN) {
-            runningRef.current = false; setRunning(false); return;
+        if (!runningRef.current) return;
+        
+        if (!api_base.api) {
+            runningRef.current = false; setRunning(false); 
+            addLog('API not ready. Bot stopped.', 'error');
+            return;
         }
 
         try {
@@ -311,43 +285,63 @@ const MultiTrader: React.FC = observer(() => {
 
             if (allConfigs.length === 0) { addLog('No trade types selected.', 'warning'); runningRef.current = false; setRunning(false); return; }
 
-            addLog(`Round start — ${allConfigs.length} trades on ${_market}`, 'info');
 
-            // Propose
-            const proposalResults = await Promise.all(
-                allConfigs.map(({ label, strategyId, ...apiConfig }) => sendJSON({ ...apiConfig }))
-            );
+            // Direct Buy (Faster than Proposal -> Buy)
+            if (!runningRef.current) return;
+            addLog(`Placing ${allConfigs.length} trades ASAP…`, 'info');
 
-            // Buy
-            const buyPromises: Promise<any>[]  = [];
-            const buyMeta: { config: TradeConfig; idx: number }[] = [];
-            proposalResults.forEach((res, i) => {
-                if (res.error) { addLog(`[${allConfigs[i].strategyId}] Proposal failed: ${res.error.message}`, 'warning'); return; }
-                const id = res.proposal?.id;
-                if (id) {
-                    buyMeta.push({ config: allConfigs[i], idx: buyPromises.length });
-                    buyPromises.push(sendJSON({ buy: id, price: allConfigs[i].amount }));
+            const buyPromises = allConfigs.map(cfg => {
+                const { amount, basis, contract_type, currency, duration, duration_unit, symbol, barrier, prediction, growth_rate, multiplier } = cfg;
+                
+                // Clean parameters object - only include fields Deriv API expects
+                const parameters: any = {
+                    amount,
+                    basis,
+                    contract_type,
+                    currency,
+                    symbol
+                };
+
+                // Only include duration for non-accumulator/multiplier contracts
+                if (!['ACCU', 'MULTUP', 'MULTDOWN'].includes(contract_type)) {
+                    parameters.duration = duration;
+                    parameters.duration_unit = duration_unit;
                 }
+
+                if (barrier !== undefined) parameters.barrier = barrier;
+                if (prediction !== undefined) parameters.prediction = prediction;
+                if (growth_rate !== undefined) parameters.growth_rate = growth_rate;
+                if (multiplier !== undefined) parameters.multiplier = multiplier;
+
+                return sendJSON({
+                    buy: 1,
+                    price: amount,
+                    parameters
+                }).then(res => ({ res, config: cfg }));
             });
 
-            if (buyPromises.length === 0) { addLog('All proposals failed. Waiting 5s…', 'error'); await new Promise(r => setTimeout(r, 5000)); if (runningRef.current) placeTrades(_market, _baseStake, _ticks, _martingale, _takeProfit, _stopLoss, _tradeTypes); return; }
-
-            addLog(`Buying ${buyPromises.length} contracts…`);
             const buyResults = await Promise.all(buyPromises);
 
             // Track
+            if (!runningRef.current) return;
             const trackPromises: Promise<TradeResult>[] = [];
             let bought = 0;
-            buyMeta.forEach(({ config, idx }) => {
-                const contractId = buyResults[idx]?.buy?.contract_id;
-                if (contractId) { trackPromises.push(trackContract(contractId, config.strategyId, config.label, config.amount)); bought++; }
-                else addLog(`[${config.strategyId}] Buy failed.`, 'error');
+
+            buyResults.forEach(({ res, config }) => {
+                const contractId = res?.buy?.contract_id;
+                if (contractId) {
+                    trackPromises.push(trackContract(contractId, config.strategyId, config.label, config.amount));
+                    bought++;
+                } else {
+                    addLog(`[${config.strategyId}] Purchase failed: ${res.error?.message || 'Unknown error'}`, 'error');
+                }
             });
 
             totalTradesRef.current += bought;
             setTotalTrades(totalTradesRef.current);
-            addLog(`Tracking ${bought} contracts…`);
+            if (bought > 0) addLog(`Tracking ${bought} active contracts…`);
 
+            if (!runningRef.current) return;
             const results = await Promise.all(trackPromises);
 
             // Process results
@@ -389,8 +383,11 @@ const MultiTrader: React.FC = observer(() => {
             addLog(`Round P/L: ${roundProfit >= 0 ? '+' : ''}${roundProfit.toFixed(2)} | Total: ${totalProfitRef.current >= 0 ? '+' : ''}${totalProfitRef.current.toFixed(2)} USD`,
                    roundProfit >= 0 ? 'success' : 'warning');
 
-            await new Promise(r => setTimeout(r, 1500));
-            if (runningRef.current) placeTrades(_market, _baseStake, _ticks, _martingale, _takeProfit, _stopLoss, _tradeTypes);
+            if (runningRef.current) {
+                timerRef.current = setTimeout(() => {
+                    placeTrades(_market, _baseStake, _ticks, _martingale, _takeProfit, _stopLoss, _tradeTypes);
+                }, 1500);
+            }
 
         } catch (err: any) {
             const msg = String(err).replace('Error: ', '');
@@ -404,7 +401,7 @@ const MultiTrader: React.FC = observer(() => {
     // ── Start / Stop ──────────────────────────────────────────────────────────
 
     const startBot = useCallback(() => {
-        if (wsRef.current?.readyState !== WebSocket.OPEN) { addLog('Not connected.', 'error'); return; }
+        if (!api_base.api) { addLog('Not connected.', 'error'); return; }
         const stake = round2(Math.max(0.5, baseStake));
         initStakes(stake);
         totalProfitRef.current = 0; totalRoundsRef.current = 0; roundWinsRef.current = 0; roundLossesRef.current = 0; totalTradesRef.current = 0;
@@ -417,31 +414,58 @@ const MultiTrader: React.FC = observer(() => {
     }, [baseStake, market, ticks, martingale, takeProfit, stopLoss, tradeTypes, initStakes, placeTrades, addLog]);
 
     const stopBot = useCallback(() => {
-        runningRef.current = false; setRunning(false);
-        addLog('Bot manually stopped. Stakes retained until next start.', 'warning');
+        runningRef.current = false; 
+        setRunning(false);
+        if (timerRef.current) {
+            clearTimeout(timerRef.current);
+            timerRef.current = null;
+        }
+        addLog('Bot stopped instantly.', 'warning');
     }, [addLog]);
 
-    const resetStats = useCallback(() => {
+    const resetBot = useCallback(() => {
+        stopBot();
         totalProfitRef.current = 0; totalRoundsRef.current = 0; roundWinsRef.current = 0; roundLossesRef.current = 0; totalTradesRef.current = 0;
         setTotalProfit(0); setTotalRounds(0); setRoundWins(0); setRoundLosses(0); setTotalTrades(0); setTotalStakeUsed(0); setTotalPayout(0);
+        setLogs([{ id: 0, time: '', message: 'Stats reset.', type: 'default' }]);
         setTransactions([]);
-        initStakes(round2(Math.max(0.5, baseStake)));
-        setLogs([{ id: logId.current++, time: '', message: 'Stats reset.', type: 'warning' }]);
-    }, [baseStake, initStakes]);
+        initStakes(baseStake);
+    }, [stopBot, baseStake, initStakes]);
 
     // Cleanup on unmount
-    useEffect(() => () => { runningRef.current = false; wsRef.current?.close(); }, []);
+    useEffect(() => () => { runningRef.current = false; }, []);
 
     // ── Derived ───────────────────────────────────────────────────────────────
 
-    const isConnected = status === 'connected';
+    const isReady = client.is_logged_in && !!api_base.api;
     const winRate = totalRounds > 0 ? ((roundWins / totalRounds) * 100).toFixed(1) : '--';
-
-
-    // ── Render ────────────────────────────────────────────────────────────────
 
     return (
         <div className='multi-trader'>
+            <div className='multi-trader__header'>
+                <div className='multi-trader__title'>
+                    <h2>Multi-Strategy Bot</h2>
+                    <span className={`multi-trader__status multi-trader__status--${isReady ? 'connected' : 'disconnected'}`}>
+                        {isReady ? '● Connected' : '○ Disconnected'}
+                    </span>
+                </div>
+                <div className='multi-trader__actions'>
+                    <button 
+                        className='multi-trader__btn multi-trader__btn--start' 
+                        onClick={startBot} 
+                        disabled={!isReady || running}
+                    >▶ Start</button>
+                    <button 
+                        className='multi-trader__btn multi-trader__btn--stop' 
+                        onClick={stopBot} 
+                        disabled={!running}
+                    >■ Stop</button>
+                    <button 
+                        className='multi-trader__btn multi-trader__btn--reset' 
+                        onClick={resetBot}
+                    >↺ Reset</button>
+                </div>
+            </div>
             <div className='multi-trader__content'>
                 {/* Parameters Section */}
                 <div className='multi-trader__card multi-trader__config-card'>
@@ -452,7 +476,7 @@ const MultiTrader: React.FC = observer(() => {
                         <div className='multi-trader__field'>
                             <label>Market (Symbol)</label>
                             <select value={market} onChange={e => setMarket(e.target.value)} disabled={running}>
-                                {useStore().analysis.markets.map(group => (
+                                {analysis.markets.map(group => (
                                     <optgroup key={group.group} label={group.group}>
                                         {group.items.map(item => (
                                             <option key={item.value} value={item.value}>{item.label}</option>
@@ -467,7 +491,7 @@ const MultiTrader: React.FC = observer(() => {
                         </div>
                         <div className='multi-trader__field'>
                             <label>Duration (Ticks)</label>
-                            <input type='number' value={ticks} min={5} max={10} step={1} disabled={running} onChange={e => setTicks(Math.max(5, parseInt(e.target.value) || 5))} />
+                            <input type='number' value={ticks} min={1} max={10} step={1} disabled={running} onChange={e => setTicks(Math.max(1, parseInt(e.target.value) || 1))} />
                         </div>
                         <div className='multi-trader__field'>
                             <label>Martingale Factor</label>
@@ -529,14 +553,8 @@ const MultiTrader: React.FC = observer(() => {
                     </div>
                 </div>
 
-                {/* Control & Stats Section */}
-                <div className='multi-trader__card multi-trader__controls-card'>
-                    <div className='multi-trader__buttons-row'>
-                        <button className='multi-trader__btn multi-trader__btn--start' onClick={startBot} disabled={!isConnected || running}>▶ Start</button>
-                        <button className='multi-trader__btn multi-trader__btn--stop' onClick={stopBot} disabled={!running}>■ Stop</button>
-                        <button className='multi-trader__btn multi-trader__btn--reset' onClick={resetStats} disabled={running}>↺ Reset</button>
-                    </div>
-
+                {/* Statistics Section */}
+                <div className='multi-trader__card multi-trader__stats-card'>
                     <div className='multi-trader__stats-display'>
                         <div className='multi-trader__stats-grid'>
                             <div className='multi-trader__stat-item'>

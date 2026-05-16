@@ -1,7 +1,1 @@
-import React from 'react';
-
-const DTraderStub = () => {
-    return <div>DTrader Native Module (Currently Disabled)</div>;
-};
-
-export default DTraderStub;
+import React from 'react'; export default () => <div>DTrader Disabled</div>;

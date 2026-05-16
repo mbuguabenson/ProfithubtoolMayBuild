@@ -2,7 +2,7 @@ import { isStaging } from '../url/helpers';
 
 export const DERIV_NEW_AUTH_URL = 'https://auth.deriv.com/oauth2/auth';
 export const DERIV_NEW_TOKEN_URL = 'https://auth.deriv.com/oauth2/token';
-export const API_MODE: 'legacy' | 'new' = 'legacy';
+export const API_MODE: 'legacy' | 'new' = 'new';
 
 export const APP_IDS = {
     LOCALHOST: 36300,
@@ -29,6 +29,8 @@ export const domain_app_ids = {
     'dbot.deriv.me': APP_IDS.PRODUCTION_ME,
     '22-dec.vercel.app': APP_IDS.VERCEL,
     'profithubtool.vercel.app': '121856',
+    'www.profithub.co.ke': '339HOj603saB86gvOX9hY',
+    'profithub.co.ke': '339HOj603saB86gvOX9hY',
 };
 
 export const getCurrentProductionDomain = () =>
@@ -157,6 +159,11 @@ const legacyGenerateOAuthURL = () => {
 };
 
 export const generateOAuthURL = async () => {
-    // Force legacy regardless of requested mode
+    if (API_MODE === 'new') {
+        const is_local = isLocal();
+        const app_id = is_local ? APP_IDS.LOCALHOST : '339HOj603saB86gvOX9hY';
+        // New OIDC-based Auth URL
+        return `https://auth.deriv.com/oauth2/auth?app_id=${app_id}&brand=deriv&redirect=home`;
+    }
     return legacyGenerateOAuthURL();
 };

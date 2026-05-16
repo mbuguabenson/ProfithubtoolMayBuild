@@ -34,7 +34,7 @@ export default class ClientStore {
     // TODO: fix with self exclusion
     updateSelfExclusion = () => {};
 
-    private authDataSubscription: { unsubscribe: () => void } | null = null;
+
     private balanceSubscription: { unsubscribe: () => void } | null = null;
 
     subscribeToBalance = () => {
@@ -67,13 +67,13 @@ export default class ClientStore {
     };
 
     constructor() {
-        this.authDataSubscription = authData$.subscribe(authData => {
+        authData$.subscribe(authData => {
             if (authData) {
                 this.setLoginId(authData.loginid);
                 this.setIsLoggedIn(true);
                 this.setAccountList(authData.account_list);
                 if (authData.balance !== undefined) {
-                    this.setBalance(authData.balance);
+                    this.setBalance(String(authData.balance));
                 }
                 if (authData.currency) {
                     this.setCurrency(authData.currency);
@@ -339,6 +339,9 @@ export default class ClientStore {
     };
 
     getToken = () => {
+        const newApiToken = localStorage.getItem('new_api_access_token');
+        if (newApiToken) return newApiToken;
+        
         const accountList = JSON.parse(localStorage.getItem('accountsList') ?? '{}');
         return accountList[this.loginid] ?? '';
     };

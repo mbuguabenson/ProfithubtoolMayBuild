@@ -32,7 +32,7 @@ export default class AnalysisStore {
 
     @observable accessor digit_stats: TDigitStat[] = [];
     @observable accessor ticks: number[] = [];
-    @observable accessor symbol = 'R_100';
+    @observable accessor symbol = '1HZ10V';
     @observable accessor current_price: string | number = '0.00';
     @observable accessor last_digit: number | null = null;
     @observable accessor total_ticks = 5000;

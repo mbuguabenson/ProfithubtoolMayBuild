@@ -11,7 +11,7 @@ const ManualTrader: React.FC = observer(() => {
     const DTRADER_URL = 'https://dtrader.profithub.co.ke/dtrader';
 
     const token = client.getToken();
-    const loginid = localStorage.getItem('active_loginid');
+    const loginid = localStorage.getItem('new_api_account_id') || localStorage.getItem('active_loginid');
     
     // Construct URL with hash params for immediate auto-auth if DTrader supports it
     const iframeSrc = `${DTRADER_URL}${token ? `#token1=${token}&loginid=${loginid}` : ''}`;
@@ -22,16 +22,14 @@ const ManualTrader: React.FC = observer(() => {
             if (!event.origin.includes('profithub.co.ke')) return;
 
             if (event.data?.type === 'DTRADER_READY') {
-                const accountsList = JSON.parse(localStorage.getItem('accountsList') || '{}');
-                const clientAccounts = JSON.parse(localStorage.getItem('clientAccounts') || '{}');
                 const active_loginid = localStorage.getItem('active_loginid');
 
                 const authData = {
                     type: 'DTRADER_AUTH',
                     token: client.getToken(),
-                    accountsList,
-                    clientAccounts,
-                    active_loginid,
+                    accountsList: JSON.parse(localStorage.getItem('new_api_accounts_list') || '[]'),
+                    clientAccounts: JSON.parse(localStorage.getItem('clientAccounts') || '{}'),
+                    active_loginid: localStorage.getItem('new_api_account_id') || active_loginid,
                     app_id: localStorage.getItem('config.app_id') || '36544',
                 };
 

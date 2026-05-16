@@ -36,7 +36,7 @@ export default class OverUnderStore {
 
     @observable accessor recent_digits: number[] = [];
     @observable accessor selected_digit: number = 5;
-    @observable accessor symbol = 'R_100';
+    @observable accessor symbol = '1HZ10V';
     @observable accessor current_price: string = '0.0000';
     @observable accessor is_connected = false;
     @observable accessor active_symbols: { symbol: string; display_name: string }[] = [];
