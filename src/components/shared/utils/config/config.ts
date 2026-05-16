@@ -159,6 +159,10 @@ const legacyGenerateOAuthURL = () => {
     return login_url;
 };
 
+export const getLegacyAppId = () => {
+    return isLocal() ? APP_IDS.LOCALHOST : '121856';
+};
+
 export const generateOAuthURL = async () => {
     if (API_MODE === 'new') {
         const is_local = isLocal();
