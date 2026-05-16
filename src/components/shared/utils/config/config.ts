@@ -166,9 +166,12 @@ export const generateOAuthURL = async () => {
         const redirect_uri = is_local 
             ? encodeURIComponent(`${window.location.origin}/`)
             : encodeURIComponent('https://profithub.co.ke');
+        
+        // Generate random state (at least 8 characters) for security
+        const state = Math.random().toString(36).substring(2, 15);
             
-        // New v4 Auth URL with correct client_id and exact redirect_uri
-        return `https://auth.deriv.com/oauth2/auth?client_id=${app_id}&brand=deriv&redirect_uri=${redirect_uri}&response_type=code`;
+        // New v4 Auth URL with correct client_id, redirect_uri, and state
+        return `https://auth.deriv.com/oauth2/auth?client_id=${app_id}&brand=deriv&redirect_uri=${redirect_uri}&response_type=code&state=${state}`;
     }
     return legacyGenerateOAuthURL();
 };
