@@ -12,7 +12,7 @@ import {
     crypto_currencies_display_order, 
     fiat_currencies_display_order, 
 } from '../shared';
-import { generateOAuthURL, API_MODE } from '../shared/utils/config/config';
+import { generateOAuthURL } from '../shared/utils/config/config';
 import { useDevice } from '@deriv-com/ui';
 import Footer from './footer';
 import AppHeader from './header';
@@ -48,16 +48,11 @@ const Layout = observer(() => {
     const getQueryParams = new URLSearchParams(window.location.search);
     const currency = getQueryParams.get('account') ?? '';
     const accountsList = JSON.parse(localStorage.getItem('accountsList') ?? '{}');
-    const newAccountsList = JSON.parse(localStorage.getItem('new_api_accounts_list') ?? '[]');
-    const isNewMode = API_MODE === 'new';
-    const isClientAccountsPopulated = isNewMode 
-        ? newAccountsList.length > 0 
-        : Object.keys(accountsList).length > 0;
-    const ifClientAccountHasCurrency = isNewMode
-        ? newAccountsList.some((acc: any) => acc.currency === currency || currency === 'demo' || currency === '')
-        : Object.values(checkClientAccount).some(account => account.currency === currency) ||
-          currency === 'demo' ||
-          currency === '';
+    const isClientAccountsPopulated = Object.keys(accountsList).length > 0;
+    const ifClientAccountHasCurrency =
+        Object.values(checkClientAccount).some(account => account.currency === currency) ||
+        currency === 'demo' ||
+        currency === '';
     const [clientHasCurrency, setClientHasCurrency] = useState(ifClientAccountHasCurrency);
     const [isAuthenticating, setIsAuthenticating] = useState(true); // Start with true to prevent flashing
 
@@ -83,11 +78,6 @@ const Layout = observer(() => {
                 const account_list_filter = account_list.filter(acc => acc.is_disabled === 0);
                 api_accounts.current.push(account_list_filter || []);
                 
-                if (isNewMode) {
-                    setClientHasCurrency(true);
-                    return;
-                }
-
                 const allCurrencies = new Set(Object.values(checkClientAccount).map(acc => acc.currency));
 
                 // Skip disabled accounts when checking for missing currency
@@ -167,13 +157,9 @@ const Layout = observer(() => {
             sessionStorage.setItem('query_param_currency', currency);
         }
 
-        const isNewMode = API_MODE === 'new';
-        const hasNewToken = !!localStorage.getItem('new_api_access_token');
-
         const checkOIDCEnabledWithMissingAccount = !isEndpointPage && !isCallbackPage && !clientHasCurrency;
         const shouldAuthenticate =
             (isLoggedInCookie && !isClientAccountsPopulated && !isEndpointPage && !isCallbackPage) ||
-            (isNewMode && isLoggedInCookie && !hasNewToken && !isEndpointPage && !isCallbackPage) ||
             checkOIDCEnabledWithMissingAccount;
 
         // Skip authentication when offline

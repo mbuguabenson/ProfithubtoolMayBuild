@@ -1,9 +1,5 @@
 import { isStaging } from '../url/helpers';
 
-export const DERIV_NEW_AUTH_URL = 'https://auth.deriv.com/oauth2/auth';
-export const DERIV_NEW_TOKEN_URL = 'https://auth.deriv.com/oauth2/token';
-export const API_MODE: 'legacy' | 'new' = 'new';
-
 export const APP_IDS = {
     LOCALHOST: 36300,
     TMP_STAGING: 121856,
@@ -28,9 +24,9 @@ export const domain_app_ids = {
     'dbot.deriv.be': APP_IDS.PRODUCTION_BE,
     'dbot.deriv.me': APP_IDS.PRODUCTION_ME,
     '22-dec.vercel.app': APP_IDS.VERCEL,
-    'profithubtool.vercel.app': '121856',
-    'www.profithub.co.ke': '339HOj603saB86gvOX9hY',
-    'profithub.co.ke': '339HOj603saB86gvOX9hY',
+    'profithubtool.vercel.app': APP_IDS.PRODUCTION,
+    'www.profithub.co.ke': APP_IDS.PRODUCTION,
+    'profithub.co.ke': APP_IDS.PRODUCTION,
 };
 
 export const getCurrentProductionDomain = () =>
@@ -149,29 +145,11 @@ export const getDebugServiceWorker = () => {
     return false;
 };
 
-const legacyGenerateOAuthURL = () => {
+export const generateOAuthURL = () => {
     const is_local = isLocal();
-    const app_id = is_local ? APP_IDS.LOCALHOST : '121856';
+    const app_id = is_local ? APP_IDS.LOCALHOST : getAppId();
     const login_url = `https://oauth.deriv.com/oauth2/authorize?app_id=${app_id}&brand=deriv&redirect=home&state=`;
  
     console.log('[Config] Generated Legacy OAuth URL:', login_url);
     return login_url;
-};
-
-export const generateOAuthURL = async () => {
-    if (API_MODE === 'new') {
-        const is_local = isLocal();
-        const app_id = is_local ? APP_IDS.LOCALHOST : '339HOj603saB86gvOX9hY';
-        // Use exact registered URL for production, dynamic for local
-        const redirect_uri = is_local 
-            ? encodeURIComponent(`${window.location.origin}/`)
-            : encodeURIComponent('https://profithub.co.ke');
-        
-        // Generate random state (at least 8 characters) for security
-        const state = Math.random().toString(36).substring(2, 15);
-            
-        // New v4 Auth URL with correct client_id, redirect_uri, and state
-        return `https://auth.deriv.com/oauth2/auth?client_id=${app_id}&brand=deriv&redirect_uri=${redirect_uri}&response_type=code&state=${state}`;
-    }
-    return legacyGenerateOAuthURL();
 };
